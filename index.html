@@ -11,15 +11,14 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
-            touch-action: manipulation; /* Improves touch responsiveness */
         }
-        /* Custom scrollbar */
+        /* Tùy chỉnh thanh cuộn */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* Keyframe animations */
+        /* Animation cho game (với tiền tố cho trình duyệt cũ) */
         @-webkit-keyframes tada {
             from { -webkit-transform: scale3d(1, 1, 1); transform: scale3d(1, 1, 1); }
             10%, 20% { -webkit-transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
@@ -54,8 +53,8 @@
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
@@ -63,685 +62,860 @@
 <body>
     <div id="root"></div>
     <script type="module">
-        import React from 'react';
-        import ReactDOM from 'react-dom/client';
-        import { GoogleGenAI } from "@google/genai";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import ReactDOM from 'react-dom/client';
 
-        const { useState, useMemo, useEffect, useCallback, useRef } = React;
+// --- From constants.ts ---
+const ALPHABET_DATA = [
+  {
+    letter: 'A',
+    words: [
+      { word: 'Apple', imagePrompt: '...', phonics: ['A','p','p','l','e'], sentence: 'I eat an apple.', emoji: '🍎' },
+      { word: 'Aunt', imagePrompt: '...', phonics: ['A','u','n','t'], sentence: 'My aunt is kind.', emoji: '👩‍🦱' },
+      { word: 'Arm', imagePrompt: '...', phonics: ['A','r','m'], sentence: 'This is my arm.', emoji: '💪' },
+      { word: 'Armchair', imagePrompt: '...', phonics: ['A','r','m','c','h','a','i','r'], sentence: 'I sit in the armchair.', emoji: '🛋️' },
+    ]
+  },
+  {
+    letter: 'B',
+    words: [
+      { word: 'Baby', imagePrompt: '...', phonics: ['B','a','b','y'], sentence: 'The baby is sleeping.', emoji: '👶' },
+      { word: 'Badminton', imagePrompt: '...', phonics: ['B','a','d','m','i','n','t','o','n'], sentence: 'We play badminton.', emoji: '🏸' },
+      { word: 'Bag', imagePrompt: '...', phonics: ['B','a','g'], sentence: 'This is my school bag.', emoji: '🎒' },
+      { word: 'Ball', imagePrompt: '...', phonics: ['B','a','l','l'], sentence: 'I play with a ball.', emoji: '⚽️' },
+      { word: 'Banana', imagePrompt: '...', phonics: ['B','a','n','a','n','a'], sentence: 'Monkeys like bananas.', emoji: '🍌' },
+      { word: 'Basketball', imagePrompt: '...', phonics: ['B','a','s','k','e','t','b','a','l','l'], sentence: 'He plays basketball.', emoji: '🏀' },
+      { word: 'Bath', imagePrompt: '...', phonics: ['B','a','t','h'], sentence: 'I take a bath.', emoji: '🛁' },
+      { word: 'Bathroom', imagePrompt: '...', phonics: ['B','a','t','h','r','o','o','m'], sentence: 'The bathroom is clean.', emoji: '🚽' },
+      { word: 'Bear', imagePrompt: '...', phonics: ['B','e','a','r'], sentence: 'A bear lives in the forest.', emoji: '🐻' },
+      { word: 'Beautiful', imagePrompt: '...', phonics: ['B','e','a','u','t','i','f','u','l'], sentence: 'The flower is beautiful.', emoji: '🦋' },
+      { word: 'Bed', imagePrompt: '...', phonics: ['B','e','d'], sentence: 'I sleep in my bed.', emoji: '🛏️' },
+      { word: 'Bedroom', imagePrompt: '...', phonics: ['B','e','d','r','o','o','m'], sentence: 'This is my bedroom.', emoji: '🛌' },
+      { word: 'Bicycle', imagePrompt: '...', phonics: ['B','i','c','y','c','l','e'], sentence: 'I can ride a bicycle.', emoji: '🚲' },
+      { word: 'Big', imagePrompt: '...', phonics: ['B','i','g'], sentence: 'The elephant is big.', emoji: '🐘' },
+      { word: 'Bike', imagePrompt: '...', phonics: ['B','i','k','e'], sentence: 'I have a new bike.', emoji: '🚴' },
+      { word: 'Bird', imagePrompt: '...', phonics: ['B','i','r','d'], sentence: 'A bird can fly.', emoji: '🐦' },
+      { word: 'Board', imagePrompt: '...', phonics: ['B','o','a','r','d'], sentence: 'The teacher writes on the board.', emoji: '👨‍🏫' },
+      { word: 'Boat', imagePrompt: '...', phonics: ['B','o','a','t'], sentence: 'The boat is on the sea.', emoji: '⛵' },
+      { word: 'Book', imagePrompt: '...', phonics: ['B','o','o','k'], sentence: 'I read a book.', emoji: '📖' },
+      { word: 'Bookcase', imagePrompt: '...', phonics: ['B','o','o','k','c','a','s','e'], sentence: 'The books are in the bookcase.', emoji: '📚' },
+      { word: 'Bread', imagePrompt: '...', phonics: ['B','r','e','a','d'], sentence: 'I eat bread for breakfast.', emoji: '🍞' },
+      { word: 'Brother', imagePrompt: '...', phonics: ['B','r','o','t','h','e','r'], sentence: 'He is my brother.', emoji: '👦' },
+      { word: 'Bus', imagePrompt: '...', phonics: ['B','u','s'], sentence: 'The school bus is yellow.', emoji: '🚌' },
+    ]
+  },
+  {
+    letter: 'C',
+    words: [
+      { word: 'Cake', imagePrompt: '...', phonics: ['C','a','k','e'], sentence: 'This is a birthday cake.', emoji: '🎂' },
+      { word: 'Camera', imagePrompt: '...', phonics: ['C','a','m','e','r','a'], sentence: 'I take a photo with a camera.', emoji: '📷' },
+      { word: 'Car', imagePrompt: '...', phonics: ['C','a','r'], sentence: 'This is a red car.', emoji: '🚗' },
+      { word: 'Cat', imagePrompt: '...', phonics: ['C','a','t'], sentence: 'The cat says meow.', emoji: '🐈' },
+      { word: 'Chair', imagePrompt: '...', phonics: ['C','h','a','i','r'], sentence: 'Sit on the chair.', emoji: '🪑' },
+      { word: 'Chalk', imagePrompt: '...', phonics: ['C','h','a','l','k'], sentence: 'I write with chalk.', emoji: '✍️' },
+      { word: 'Chicken', imagePrompt: '...', phonics: ['C','h','i','c','k','e','n'], sentence: 'The chicken lays eggs.', emoji: '🐔' },
+      { word: 'Chocolate', imagePrompt: '...', phonics: ['C','h','o','c','o','l','a','t','e'], sentence: 'Chocolate is sweet.', emoji: '🍫' },
+      { word: 'Clean', imagePrompt: '...', phonics: ['C','l','e','a','n'], sentence: 'My room is clean.', emoji: '🧼' },
+      { word: 'Clock', imagePrompt: '...', phonics: ['C','l','o','c','k'], sentence: 'The clock shows the time.', emoji: '⏰' },
+      { word: 'Computer', imagePrompt: '...', phonics: ['C','o','m','p','u','t','e','r'], sentence: 'I use a computer.', emoji: '💻' },
+      { word: 'Cookie', imagePrompt: '...', phonics: ['C','o','o','k','i','e'], sentence: 'I like chocolate chip cookies.', emoji: '🍪' },
+      { word: 'Cousin', imagePrompt: '...', phonics: ['C','o','u','s','i','n'], sentence: 'My cousin is my friend.', emoji: '🧑‍🤝‍🧑' },
+      { word: 'Crocodile', imagePrompt: '...', phonics: ['C','r','o','c','o','d','i','l','e'], sentence: 'A crocodile is long.', emoji: '🐊' },
+      { word: 'Cupboard', imagePrompt: '...', phonics: ['C','u','p','b','o','a','r','d'], sentence: 'The cups are in the cupboard.', emoji: '🍽️' },
+    ]
+  },
+  {
+    letter: 'D',
+    words: [
+      { word: 'Dance', imagePrompt: '...', phonics: ['D','a','n','c','e'], sentence: 'I like to dance.', emoji: '💃' },
+      { word: 'Desk', imagePrompt: '...', phonics: ['D','e','s','k'], sentence: 'I do homework at my desk.', emoji: '✍️' },
+      { word: 'Diningroom', imagePrompt: '...', phonics: ['D','i','n','i','n','g','r','o','o','m'], sentence: 'We eat in the dining room.', emoji: '🍽️' },
+      { word: 'Dirty', imagePrompt: '...', phonics: ['D','i','r','t','y'], sentence: 'My hands are dirty.', emoji: '✋' },
+      { word: 'Dog', imagePrompt: '...', phonics: ['D','o','g'], sentence: 'The dog barks.', emoji: '🐕' },
+      { word: 'Doll', imagePrompt: '...', phonics: ['D','o','l','l'], sentence: 'She plays with a doll.', emoji: '🎎' },
+      { word: 'Dolphin', imagePrompt: '...', phonics: ['D','o','l','p','h','i','n'], sentence: 'A dolphin can swim.', emoji: '🐬' },
+      { word: 'Dress', imagePrompt: '...', phonics: ['D','r','e','s','s'], sentence: 'She wears a pink dress.', emoji: '👗' },
+      { word: 'Drive', imagePrompt: '...', phonics: ['D','r','i','v','e'], sentence: 'My father can drive a car.', emoji: '🚗' },
+      { word: 'Duck', imagePrompt: '...', phonics: ['D','u','c','k'], sentence: 'The duck is in the pond.', emoji: '🦆' },
+    ]
+  },
+  {
+    letter: 'E',
+    words: [
+      { word: 'Ear', imagePrompt: '...', phonics: ['E','a','r'], sentence: 'I can hear with my ears.', emoji: '👂' },
+      { word: 'Elephant', imagePrompt: '...', phonics: ['E','l','e','p','h','a','n','t'], sentence: 'An elephant has a long trunk.', emoji: '🐘' },
+      { word: 'Eraser', imagePrompt: '...', phonics: ['E','r','a','s','e','r'], sentence: 'I use an eraser.', emoji: '📝' },
+      { word: 'Eye', imagePrompt: '...', phonics: ['E','y','e'], sentence: 'I can see with my eyes.', emoji: '👁️' },
+    ]
+  },
+  {
+    letter: 'F',
+    words: [
+      { word: 'Face', imagePrompt: '...', phonics: ['F','a','c','e'], sentence: 'I wash my face.', emoji: '😊' },
+      { word: 'Father', imagePrompt: '...', phonics: ['F','a','t','h','e','r'], sentence: 'My father is tall.', emoji: '👨' },
+      { word: 'Fat', imagePrompt: '...', phonics: ['F','a','t'], sentence: 'The cat is fat.', emoji: '🐈' },
+      { word: 'Feet', imagePrompt: '...', phonics: ['F','e','e','t'], sentence: 'I have two feet.', emoji: '👣' },
+      { word: 'Fish', imagePrompt: '...', phonics: ['F','i','s','h'], sentence: 'The fish lives in water.', emoji: '🐠' },
+      { word: 'Flower', imagePrompt: '...', phonics: ['F','l','o','w','e','r'], sentence: 'The flower smells good.', emoji: '🌸' },
+      { word: 'Fly', imagePrompt: '...', phonics: ['F','l','y'], sentence: 'A bird can fly.', emoji: '🕊️' },
+      { word: 'Football', imagePrompt: '...', phonics: ['F','o','o','t','b','a','l','l'], sentence: 'They play football.', emoji: '🏈' },
+      { word: 'Foot', imagePrompt: '...', phonics: ['F','o','o','t'], sentence: 'This is my left foot.', emoji: '🦶' },
+    ]
+  },
+  {
+    letter: 'G',
+    words: [
+      { word: 'Giraffe', imagePrompt: '...', phonics: ['G','i','r','a','f','f','e'], sentence: 'A giraffe has a long neck.', emoji: '🦒' },
+      { word: 'Grandfather', imagePrompt: '...', phonics: ['G','r','a','n','d','f','a','t','h','e','r'], sentence: 'My grandfather is old.', emoji: '👴' },
+      { word: 'Grandmother', imagePrompt: '...', phonics: ['G','r','a','n','d','m','o','t','h','e','r'], sentence: 'My grandmother is kind.', emoji: '👵' },
+      { word: 'Grape', imagePrompt: '...', phonics: ['G','r','a','p','e'], sentence: 'Grapes are yummy.', emoji: '🍇' },
+      { word: 'Guitar', imagePrompt: '...', phonics: ['G','u','i','t','a','r'], sentence: 'He can play the guitar.', emoji: '🎸' },
+    ]
+  },
+  {
+    letter: 'H',
+    words: [
+      { word: 'Hair', imagePrompt: '...', phonics: ['H','a','i','r'], sentence: 'She has long hair.', emoji: '👱‍♀️' },
+      { word: 'Hamburger', imagePrompt: '...', phonics: ['H','a','m','b','u','r','g','e','r'], sentence: 'I like to eat hamburgers.', emoji: '🍔' },
+      { word: 'Hand', imagePrompt: '...', phonics: ['H','a','n','d'], sentence: 'I write with my hand.', emoji: '✋' },
+      { word: 'Happy', imagePrompt: '...', phonics: ['H','a','p','p','y'], sentence: 'I am happy today.', emoji: '😄' },
+      { word: 'Hat', imagePrompt: '...', phonics: ['H','a','t'], sentence: 'This is my new hat.', emoji: '👒' },
+      { word: 'Head', imagePrompt: '...', phonics: ['H','e','a','d'], sentence: 'I wear a hat on my head.', emoji: '🤕' },
+      { word: 'Helicopter', imagePrompt: '...', phonics: ['H','e','l','i','c','o','p','t','e','r'], sentence: 'The helicopter is in the sky.', emoji: '🚁' },
+      { word: 'Hippo', imagePrompt: '...', phonics: ['H','i','p','p','o'], sentence: 'A hippo is big.', emoji: '🦛' },
+      { word: 'Horse', imagePrompt: '...', phonics: ['H','o','r','s','e'], sentence: 'I can ride a horse.', emoji: '🐎' },
+    ]
+  },
+  {
+    letter: 'I',
+    words: [
+      { word: 'Ice-cream', imagePrompt: '...', phonics: ['I','c','e','-','c','r','e','a','m'], sentence: 'I love ice-cream.', emoji: '🍦' },
+    ]
+  },
+  {
+    letter: 'J',
+    words: [
+      { word: 'Jacket', imagePrompt: '...', phonics: ['J','a','c','k','e','t'], sentence: 'I wear a jacket when it is cold.', emoji: '🧥' },
+    ]
+  },
+  {
+    letter: 'K',
+    words: [
+      { word: 'Kitchen', imagePrompt: '...', phonics: ['K','i','t','c','h','e','n'], sentence: 'My mother is in the kitchen.', emoji: '🍳' },
+      { word: 'Kite', imagePrompt: '...', phonics: ['K','i','t','e'], sentence: 'I fly a kite.', emoji: '🪁' },
+    ]
+  },
+  {
+    letter: 'L',
+    words: [
+      { word: 'Lamp', imagePrompt: '...', phonics: ['L','a','m','p'], sentence: 'The lamp is on the table.', emoji: '💡' },
+      { word: 'Leg', imagePrompt: '...', phonics: ['L','e','g'], sentence: 'I can kick with my leg.', emoji: '🦵' },
+      { word: 'Lion', imagePrompt: '...', phonics: ['L','i','o','n'], sentence: 'The lion is king of the jungle.', emoji: '🦁' },
+      { word: 'Listen', imagePrompt: '...', phonics: ['L','i','s','t','e','n'], sentence: 'I listen to music.', emoji: '🎧' },
+      { word: 'Livingroom', imagePrompt: '...', phonics: ['L','i','v','i','n','g','r','o','o','m'], sentence: 'We watch TV in the living room.', emoji: '🛋️' },
+      { word: 'Long', imagePrompt: '...', phonics: ['L','o','n','g'], sentence: 'A ruler is long.', emoji: '📏' },
+      { word: 'Lorry', imagePrompt: '...', phonics: ['L','o','r','r','y'], sentence: 'The lorry is very big.', emoji: '🚚' },
+    ]
+  },
+  {
+    letter: 'M',
+    words: [
+      { word: 'Match', imagePrompt: '...', phonics: ['M','a','t','c','h'], sentence: 'We won the match.', emoji: '🏆' },
+      { word: 'Mat', imagePrompt: '...', phonics: ['M','a','t'], sentence: 'The cat is on the mat.', emoji: '🧘' },
+      { word: 'Mirror', imagePrompt: '...', phonics: ['M','i','r','r','o','r'], sentence: 'I see myself in the mirror.', emoji: '🪞' },
+      { word: 'Monkey', imagePrompt: '...', phonics: ['M','o','n','k','e','y'], sentence: 'A monkey likes bananas.', emoji: '🐒' },
+      { word: 'Motorbike', imagePrompt: '...', phonics: ['M','o','t','o','r','b','i','k','e'], sentence: 'He rides a motorbike.', emoji: '🏍️' },
+      { word: 'Mother', imagePrompt: '...', phonics: ['M','o','t','h','e','r'], sentence: 'My mother is beautiful.', emoji: '👩' },
+      { word: 'Mouth', imagePrompt: '...', phonics: ['M','o','u','t','h'], sentence: 'I eat with my mouth.', emoji: '👄' },
+      { word: 'Mouse', imagePrompt: '...', phonics: ['M','o','u','s','e'], sentence: 'The mouse is small.', emoji: '🐁' },
+    ]
+  },
+  {
+    letter: 'N',
+    words: [
+      { word: 'Neck', imagePrompt: '...', phonics: ['N','e','c','k'], sentence: 'A giraffe has a long neck.', emoji: '🦒' },
+      { word: 'Notebook', imagePrompt: '...', phonics: ['N','o','t','e','b','o','o','k'], sentence: 'I write in my notebook.', emoji: '📓' },
+      { word: 'Nose', imagePrompt: '...', phonics: ['N','o','s','e'], sentence: 'I can smell with my nose.', emoji: '👃' },
+    ]
+  },
+  {
+    letter: 'O',
+    words: [
+      { word: 'Old', imagePrompt: '...', phonics: ['O','l','d'], sentence: 'My grandfather is old.', emoji: '👴' },
+      { word: 'Orange', imagePrompt: '...', phonics: ['O','r','a','n','g','e'], sentence: 'An orange is a fruit.', emoji: '🍊' },
+    ]
+  },
+  {
+    letter: 'P',
+    words: [
+      { word: 'Pen', imagePrompt: '...', phonics: ['P','e','n'], sentence: 'I write with a pen.', emoji: '🖊️' },
+      { word: 'Pencil', imagePrompt: '...', phonics: ['P','e','n','c','i','l'], sentence: 'This is a yellow pencil.', emoji: '✏️' },
+      { word: 'Phone', imagePrompt: '...', phonics: ['P','h','o','n','e'], sentence: 'I have a new phone.', emoji: '📱' },
+      { word: 'Piano', imagePrompt: '...', phonics: ['P','i','a','n','o'], sentence: 'I can play the piano.', emoji: '🎹' },
+      { word: 'Picture', imagePrompt: '...', phonics: ['P','i','c','t','u','r','e'], sentence: 'This is a nice picture.', emoji: '🖼️' },
+      { word: 'Pineapple', imagePrompt: '...', phonics: ['P','i','n','e','a','p','p','l','e'], sentence: 'Pineapple is sweet.', emoji: '🍍' },
+      { word: 'Plane', imagePrompt: '...', phonics: ['P','l','a','n','e'], sentence: 'The plane is flying.', emoji: '✈️' },
+      { word: 'Point', imagePrompt: '...', phonics: ['P','o','i','n','t'], sentence: 'Point to the door.', emoji: '👉' },
+      { word: 'Potato', imagePrompt: '...', phonics: ['P','o','t','a','t','o'], sentence: 'A potato grows underground.', emoji: '🥔' },
+      { word: 'Pupil', imagePrompt: '...', phonics: ['P','u','p','i','l'], sentence: 'I am a pupil.', emoji: '🧑‍🎓' },
+    ]
+  },
+  {
+    letter: 'Q',
+    words: [
+      { word: 'Queen', imagePrompt: '...', phonics: ['Q','u','e','e','n'], sentence: 'The queen is kind.', emoji: '👑' },
+    ]
+  },
+  {
+    letter: 'R',
+    words: [
+      { word: 'Read', imagePrompt: '...', phonics: ['R','e','a','d'], sentence: 'I read a book.', emoji: '📖' },
+      { word: 'Ride', imagePrompt: '...', phonics: ['R','i','d','e'], sentence: 'I ride a bike.', emoji: '🚲' },
+      { word: 'Robot', imagePrompt: '...', phonics: ['R','o','b','o','t'], sentence: 'The robot can walk.', emoji: '🤖' },
+      { word: 'Room', imagePrompt: '...', phonics: ['R','o','o','m'], sentence: 'This is my room.', emoji: '🏠' },
+      { word: 'Ruler', imagePrompt: '...', phonics: ['R','u','l','e','r'], sentence: 'I use a ruler to draw a line.', emoji: '📏' },
+    ]
+  },
+  {
+    letter: 'S',
+    words: [
+      { word: 'Sad', imagePrompt: '...', phonics: ['S','a','d'], sentence: 'I feel sad.', emoji: '😢' },
+      { word: 'Say', imagePrompt: '...', phonics: ['S','a','y'], sentence: 'Can you say your name?', emoji: '🗣️' },
+      { word: 'Shirt', imagePrompt: '...', phonics: ['S','h','i','r','t'], sentence: 'My shirt is blue.', emoji: '👕' },
+      { word: 'Shoes', imagePrompt: '...', phonics: ['S','h','o','e','s'], sentence: 'I wear new shoes.', emoji: '👟' },
+      { word: 'Short', imagePrompt: '...', phonics: ['S','h','o','r','t'], sentence: 'This pencil is short.', emoji: '✏️' },
+      { word: 'Shorts', imagePrompt: '...', phonics: ['S','h','o','r','t','s'], sentence: 'I wear shorts in summer.', emoji: '🩳' },
+      { word: 'Shoulder', imagePrompt: '...', phonics: ['S','h','o','u','l','d','e','r'], sentence: 'I have two shoulders.', emoji: '🤷' },
+      { word: 'Sing', imagePrompt: '...', phonics: ['S','i','n','g'], sentence: 'I can sing a song.', emoji: '🎤' },
+      { word: 'Sister', imagePrompt: '...', phonics: ['S','i','s','t','e','r'], sentence: 'She is my sister.', emoji: '👧' },
+      { word: 'Sit', imagePrompt: '...', phonics: ['S','i','t'], sentence: 'Please sit down.', emoji: '🪑' },
+      { word: 'Skirt', imagePrompt: '...', phonics: ['S','k','i','r','t'], sentence: 'She is wearing a skirt.', emoji: '👗' },
+      { word: 'Small', imagePrompt: '...', phonics: ['S','m','a','l','l'], sentence: 'An ant is small.', emoji: '🐜' },
+      { word: 'Snake', imagePrompt: '...', phonics: ['S','n','a','k','e'], sentence: 'The snake is long.', emoji: '🐍' },
+      { word: 'Socks', imagePrompt: '...', phonics: ['S','o','c','k','s'], sentence: 'My socks are white.', emoji: '🧦' },
+      { word: 'Sofa', imagePrompt: '...', phonics: ['S','o','f','a'], sentence: 'I sit on the sofa.', emoji: '🛋️' },
+      { word: 'Stand', imagePrompt: '...', phonics: ['S','t','a','n','d'], sentence: 'Please stand up.', emoji: '🧍' },
+      { word: 'Strawberry', imagePrompt: '...', phonics: ['S','t','r','a','w','b','e','r','r','y'], sentence: 'Strawberry is red.', emoji: '🍓' },
+      { word: 'Sweater', imagePrompt: '...', phonics: ['S','w','e','a','t','e','r'], sentence: 'I wear a sweater in winter.', emoji: '🧥' },
+      { word: 'Swim', imagePrompt: '...', phonics: ['S','w','i','m'], sentence: 'I can swim in the pool.', emoji: '🏊' },
+    ]
+  },
+  {
+    letter: 'T',
+    words: [
+      { word: 'Table', imagePrompt: '...', phonics: ['T','a','b','l','e'], sentence: 'The book is on the table.', emoji: '📚' },
+      { word: 'Tail', imagePrompt: '...', phonics: ['T','a','i','l'], sentence: 'A dog has a tail.', emoji: '🐕' },
+      { word: 'Talk', imagePrompt: '...', phonics: ['T','a','l','k'], sentence: 'We can talk together.', emoji: '🗣️' },
+      { word: 'Teacher', imagePrompt: '...', phonics: ['T','e','a','c','h','e','r'], sentence: 'My teacher is nice.', emoji: '👩‍🏫' },
+      { word: 'Teeth', imagePrompt: '...', phonics: ['T','e','e','t','h'], sentence: 'I brush my teeth.', emoji: '🦷' },
+      { word: 'Tennis', imagePrompt: '...', phonics: ['T','e','n','n','i','s'], sentence: 'Let us play tennis.', emoji: '🎾' },
+      { word: 'Thin', imagePrompt: '...', phonics: ['T','h','i','n'], sentence: 'The book is thin.', emoji: '📖' },
+      { word: 'Tiger', imagePrompt: '...', phonics: ['T','i','g','e','r'], sentence: 'A tiger is a big cat.', emoji: '🐅' },
+      { word: 'T-shirt', imagePrompt: '...', phonics: ['T','-','s','h','i','r','t'], sentence: 'I have a white T-shirt.', emoji: '👕' },
+      { word: 'Tomato', imagePrompt: '...', phonics: ['T','o','m','a','t','o'], sentence: 'A tomato is red.', emoji: '🍅' },
+      { word: 'Tooth', imagePrompt: '...', phonics: ['T','o','o','t','h'], sentence: 'I lost a tooth.', emoji: '🦷' },
+      { word: 'Train', imagePrompt: '...', phonics: ['T','r','a','i','n'], sentence: 'The train is fast.', emoji: '🚂' },
+      { word: 'Trousers', imagePrompt: '...', phonics: ['T','r','o','u','s','e','r','s'], sentence: 'He is wearing blue trousers.', emoji: '👖' },
+    ]
+  },
+  {
+    letter: 'U',
+    words: [
+      { word: 'Ugly', imagePrompt: '...', phonics: ['U','g','l','y'], sentence: 'The monster is ugly.', emoji: '👹' },
+      { word: 'Uncle', imagePrompt: '...', phonics: ['U','n','c','l','e'], sentence: 'My uncle is funny.', emoji: '👨‍🦰' },
+      { word: 'Umbrella', imagePrompt: '...', phonics: ['U','m','b','r','e','l','l','a'], sentence: 'I have an umbrella.', emoji: '☂️' },
+    ]
+  },
+  {
+    letter: 'V',
+    words: [
+      { word: 'Volcano', imagePrompt: '...', phonics: ['V','o','l','c','a','n','o'], sentence: 'The volcano is hot.', emoji: '🌋' },
+    ]
+  },
+  {
+    letter: 'W',
+    words: [
+      { word: 'Walk', imagePrompt: '...', phonics: ['W','a','l','k'], sentence: 'I walk to school.', emoji: '🚶' },
+      { word: 'Wardrobe', imagePrompt: '...', phonics: ['W','a','r','d','r','o','b','e'], sentence: 'My clothes are in the wardrobe.', emoji: '🚪' },
+      { word: 'Watch', imagePrompt: '...', phonics: ['W','a','t','c','h'], sentence: 'I have a new watch.', emoji: '⌚' },
+      { word: 'Watermelon', imagePrompt: '...', phonics: ['W','a','t','e','r','m','e','l','o','n'], sentence: 'Watermelon is juicy.', emoji: '🍉' },
+    ]
+  },
+  {
+    letter: 'X',
+    words: [
+      { word: 'Xylophone', imagePrompt: '...', phonics: ['X','y','l','o','p','h','o','n','e'], sentence: 'I play the xylophone.', emoji: '🎶' },
+    ]
+  },
+  {
+    letter: 'Y',
+    words: [
+      { word: 'Young', imagePrompt: '...', phonics: ['Y','o','u','n','g'], sentence: 'The baby is young.', emoji: '👶' },
+      { word: 'Yacht', imagePrompt: '...', phonics: ['Y','a','c','h','t'], sentence: 'The yacht is on the water.', emoji: '⛵️' },
+    ]
+  },
+  {
+    letter: 'Z',
+    words: [
+      { word: 'Zebra', imagePrompt: '...', phonics: ['Z','e','b','r','a'], sentence: 'The zebra has stripes.', emoji: '🦓' },
+    ]
+  },
+];
 
-        // --- From constants.ts ---
-        const ALPHABET_DATA = [
-          { 
-            letter: 'A', 
-            words: [
-              { word: 'Apple', imagePrompt: 'A cute, simple illustration of a shiny red apple for a children\'s alphabet book.', phonics: ['/æ/', '/p/', '/əl/'], sentence: 'I eat an apple.' },
-              { word: 'Ant', imagePrompt: 'A cute, simple illustration of a small ant for a children\'s alphabet book.', phonics: ['/æ/', '/n/', '/t/'], sentence: 'The ant is small.' },
-              { word: 'Alligator', imagePrompt: 'A cute, simple illustration of a friendly alligator for a children\'s alphabet book.', phonics: ['/æ/', '/l/', '/ɪ/', '/ɡ/', '/eɪ/', '/t/', '/ər/'], sentence: 'The alligator is big.' },
-              { word: 'Aunt', imagePrompt: 'A cute, simple illustration of a friendly aunt for a children\'s alphabet book.', phonics: ['/ænt/'], sentence: 'My aunt is kind.' },
-              { word: 'Armchair', imagePrompt: 'A cute, simple illustration of a cozy armchair for a children\'s alphabet book.', phonics: ['/ˈɑːrmˌtʃɛər/'], sentence: 'I sit in the armchair.' },
-            ]
-          },
-          { 
-            letter: 'B', 
-            words: [
-              { word: 'Ball', imagePrompt: 'A cute, simple illustration of a colorful beach ball for a children\'s alphabet book.', phonics: ['/b/', '/ɔː/', '/l/'], sentence: 'I play with a ball.' },
-              { word: 'Bed', imagePrompt: 'A cute, simple illustration of a cozy bed for a children\'s alphabet book.', phonics: ['/b/', '/e/', '/d/'], sentence: 'I sleep in my bed.' },
-              { word: 'Bus', imagePrompt: 'A cute, simple illustration of a yellow school bus for a children\'s alphabet book.', phonics: ['/b/', '/ʌ/', '/s/'], sentence: 'The bus is big.' },
-              { word: 'Book', imagePrompt: 'A cute, simple illustration of a colorful book for a children\'s alphabet book.', phonics: ['/bʊk/'], sentence: 'I read a book.' },
-              { word: 'Brother', imagePrompt: 'A cute, simple illustration of a happy brother for a children\'s alphabet book.', phonics: ['/ˈbrʌðər/'], sentence: 'He is my brother.' },
-              { word: 'Bicycle', imagePrompt: 'A cute, simple illustration of a red bicycle for a children\'s alphabet book.', phonics: ['/ˈbaɪsɪkəl/'], sentence: 'I ride my bicycle.' },
-            ]
-          },
-          { 
-            letter: 'C', 
-            words: [
-              { word: 'Cat', imagePrompt: 'A cute, simple illustration of a playful kitten for a children\'s alphabet book.', phonics: ['/k/', '/æ/', '/t/'], sentence: 'The cat is on the mat.' },
-              { word: 'Car', imagePrompt: 'A cute, simple illustration of a red toy car for a children\'s alphabet book.', phonics: ['/k/', '/ɑːr/'], sentence: 'This is a red car.' },
-              { word: 'Cup', imagePrompt: 'A cute, simple illustration of a colorful cup for a children\'s alphabet book.', phonics: ['/k/', '/ʌ/', '/p/'], sentence: 'The cup is blue.' },
-              { word: 'Chair', imagePrompt: 'A cute, simple illustration of a wooden chair for a children\'s alphabet book.', phonics: ['/tʃɛər/'], sentence: 'Sit on the chair.' },
-              { word: 'Computer', imagePrompt: 'A cute, simple illustration of a friendly computer for a children\'s alphabet book.', phonics: ['/kəmˈpjuːtər/'], sentence: 'I use the computer.' },
-              { word: 'Cake', imagePrompt: 'A cute, simple illustration of a birthday cake with candles for a children\'s alphabet book.', phonics: ['/keɪk/'], sentence: 'I like to eat cake.' },
-            ]
-          },
-          { 
-            letter: 'D', 
-            words: [
-              { word: 'Dog', imagePrompt: 'A cute, simple illustration of a friendly puppy for a children\'s alphabet book.', phonics: ['/d/', '/ɔːɡ/'], sentence: 'The dog is brown.' },
-              { word: 'Desk', imagePrompt: 'A cute, simple illustration of a school desk for a children\'s alphabet book.', phonics: ['/dɛsk/'], sentence: 'My book is on the desk.' },
-              { word: 'Doll', imagePrompt: 'A cute, simple illustration of a cute doll for a children\'s alphabet book.', phonics: ['/dɒl/'], sentence: 'She plays with a doll.' },
-              { word: 'Duck', imagePrompt: 'A cute, simple illustration of a yellow duckling for a children\'s alphabet book.', phonics: ['/dʌk/'], sentence: 'The duck can swim.' },
-            ] 
-          },
-          { 
-            letter: 'E', 
-            words: [
-              { word: 'Elephant', imagePrompt: 'A cute, simple illustration of a baby elephant with big ears for a children\'s alphabet book.', phonics: ['/ˈɛl.ə.fənt/'], sentence: 'The elephant is big.' },
-              { word: 'Eraser', imagePrompt: 'A cute, simple illustration of a pink eraser for a children\'s alphabet book.', phonics: ['/ɪˈreɪsər/'], sentence: 'I use an eraser.' },
-              { word: 'Eye', imagePrompt: 'A cute, simple illustration of a big, friendly eye for a children\'s alphabet book.', phonics: ['/aɪ/'], sentence: 'I see with my eye.' },
-            ] 
-          },
-          { 
-            letter: 'F', 
-            words: [
-              { word: 'Fish', imagePrompt: 'A cute, simple illustration of a colorful tropical fish for a children\'s alphabet book.', phonics: ['/f/', '/ɪ/', '/ʃ/'], sentence: 'The fish is small.' },
-              { word: 'Father', imagePrompt: 'A cute, simple illustration of a happy father for a children\'s alphabet book.', phonics: ['/ˈfɑːðər/'], sentence: 'This is my father.' },
-              { word: 'Flower', imagePrompt: 'A cute, simple illustration of a bright, colorful flower for a children\'s alphabet book.', phonics: ['/ˈflaʊər/'], sentence: 'The flower is beautiful.' },
-              { word: 'Foot', imagePrompt: 'A cute, simple illustration of a small foot for a children\'s alphabet book.', phonics: ['/fʊt/'], sentence: 'This is my foot.' },
-            ] 
-          },
-          { 
-            letter: 'G', 
-            words: [
-              { word: 'Goat', imagePrompt: 'A cute, simple illustration of a happy little goat for a children\'s alphabet book.', phonics: ['/ɡ/', '/oʊt/'], sentence: 'The goat is white.' },
-              { word: 'Giraffe', imagePrompt: 'A cute, simple illustration of a tall giraffe for a children\'s alphabet book.', phonics: ['/dʒəˈræf/'], sentence: 'The giraffe is tall.' },
-              { word: 'Guitar', imagePrompt: 'A cute, simple illustration of a small guitar for a children\'s alphabet book.', phonics: ['/ɡɪˈtɑːr/'], sentence: 'He can play the guitar.' },
-              { word: 'Grape', imagePrompt: 'A cute, simple illustration of a bunch of purple grapes for a children\'s alphabet book.', phonics: ['/ɡreɪp/'], sentence: 'I like to eat grapes.' },
-            ] 
-          },
-          { 
-            letter: 'H', 
-            words: [
-              { word: 'Hat', imagePrompt: 'A cute, simple illustration of a fun, colorful hat for a children\'s alphabet book.', phonics: ['/h/', '/æ/', '/t/'], sentence: 'This is my hat.' },
-              { word: 'Hand', imagePrompt: 'A cute, simple illustration of a friendly waving hand for a children\'s alphabet book.', phonics: ['/hænd/'], sentence: 'This is my hand.' },
-              { word: 'Horse', imagePrompt: 'A cute, simple illustration of a brown horse for a children\'s alphabet book.', phonics: ['/hɔːrs/'], sentence: 'The horse can run.' },
-              { word: 'Happy', imagePrompt: 'A cute, simple illustration of a happy smiling face for a children\'s alphabet book.', phonics: ['/ˈhæpi/'], sentence: 'I am happy.' },
-            ] 
-          },
-          { 
-            letter: 'I', 
-            words: [
-              { word: 'Igloo', imagePrompt: 'A cute, simple illustration of a cozy igloo in the snow for a children\'s alphabet book.', phonics: ['/ˈɪɡ.luː/'], sentence: 'The igloo is white.' },
-              { word: 'Ice-cream', imagePrompt: 'A cute, simple illustration of a scoop of ice cream in a cone for a children\'s alphabet book.', phonics: ['/ˈaɪs ˌkriːm/'], sentence: 'I love ice-cream.' },
-            ] 
-          },
-          { 
-            letter: 'J', 
-            words: [
-              { word: 'Jar', imagePrompt: 'A cute, simple illustration of a glass jar with a colorful lid for a children\'s alphabet book.', phonics: ['/dʒ/', '/ɑːr/'], sentence: 'The jar is full.' },
-              { word: 'Jacket', imagePrompt: 'A cute, simple illustration of a blue jacket for a children\'s alphabet book.', phonics: ['/ˈdʒækɪt/'], sentence: 'I wear a jacket.' },
-            ] 
-          },
-          { 
-            letter: 'K', 
-            words: [
-              { word: 'Kite', imagePrompt: 'A cute, simple illustration of a kite flying in the sky for a children\'s alphabet book.', phonics: ['/k/', '/aɪt/'], sentence: 'I fly a kite.' },
-              { word: 'Kitchen', imagePrompt: 'A cute, simple illustration of a clean kitchen for a children\'s alphabet book.', phonics: ['/ˈkɪtʃən/'], sentence: 'Mom is in the kitchen.' },
-              { word: 'Key', imagePrompt: 'A cute, simple illustration of a golden key for a children\'s alphabet book.', phonics: ['/kiː/'], sentence: 'This is a key.' },
-            ] 
-          },
-          { 
-            letter: 'L', 
-            words: [
-              { word: 'Lion', imagePrompt: 'A cute, simple illustration of a friendly lion cub for a children\'s alphabet book.', phonics: ['/ˈlaɪ.ən/'], sentence: 'The lion is big.' },
-              { word: 'Lamp', imagePrompt: 'A cute, simple illustration of a colorful lamp for a children\'s alphabet book.', phonics: ['/læmp/'], sentence: 'The lamp is on.' },
-              { word: 'Leg', imagePrompt: 'A cute, simple illustration of a leg for a children\'s alphabet book.', phonics: ['/lɛɡ/'], sentence: 'This is my leg.' },
-            ] 
-          },
-          { 
-            letter: 'M', 
-            words: [
-              { word: 'Mouse', imagePrompt: 'A cute, simple illustration of a tiny mouse eating cheese for a children\'s alphabet book.', phonics: ['/m/', '/aʊs/'], sentence: 'The mouse is small.' },
-              { word: 'Mother', imagePrompt: 'A cute, simple illustration of a loving mother for a children\'s alphabet book.', phonics: ['/ˈmʌðər/'], sentence: 'This is my mother.' },
-              { word: 'Monkey', imagePrompt: 'A cute, simple illustration of a playful monkey for a children\'s alphabet book.', phonics: ['/ˈmʌŋki/'], sentence: 'The monkey likes bananas.' },
-              { word: 'Mouth', imagePrompt: 'A cute, simple illustration of a smiling mouth for a children\'s alphabet book.', phonics: ['/maʊθ/'], sentence: 'Open your mouth.' },
-            ] 
-          },
-          { 
-            letter: 'N', 
-            words: [
-              { word: 'Nest', imagePrompt: 'A cute, simple illustration of a bird\'s nest with eggs for a children\'s alphabet book.', phonics: ['/n/', '/ɛst/'], sentence: 'The nest has eggs.' },
-              { word: 'Notebook', imagePrompt: 'A cute, simple illustration of a notebook and pencil for a children\'s alphabet book.', phonics: ['/ˈnoʊtˌbʊk/'], sentence: 'I write in my notebook.' },
-              { word: 'Nose', imagePrompt: 'A cute, simple illustration of a cute nose for a children\'s alphabet book.', phonics: ['/noʊz/'], sentence: 'This is my nose.' },
-            ] 
-          },
-          { 
-            letter: 'O', 
-            words: [
-              { word: 'Octopus', imagePrompt: 'A cute, simple illustration of a smiling octopus for a children\'s alphabet book.', phonics: ['/ˈɒk.tə.pʊs/'], sentence: 'The octopus has eight arms.' },
-              { word: 'Orange', imagePrompt: 'A cute, simple illustration of a round orange for a children\'s alphabet book.', phonics: ['/ˈɔːrɪndʒ/'], sentence: 'An orange is sweet.' },
-            ] 
-          },
-          { 
-            letter: 'P', 
-            words: [
-              { word: 'Pig', imagePrompt: 'A cute, simple illustration of a happy piglet in mud for a children\'s alphabet book.', phonics: ['/p/', '/ɪɡ/'], sentence: 'The pig is pink.' },
-              { word: 'Pen', imagePrompt: 'A cute, simple illustration of a blue pen for a children\'s alphabet book.', phonics: ['/pɛn/'], sentence: 'I have a pen.' },
-              { word: 'Pencil', imagePrompt: 'A cute, simple illustration of a yellow pencil for a children\'s alphabet book.', phonics: ['/ˈpɛnsəl/'], sentence: 'This is a pencil.' },
-              { word: 'Piano', imagePrompt: 'A cute, simple illustration of a grand piano for a children\'s alphabet book.', phonics: ['/piˈænoʊ/'], sentence: 'I can play the piano.' },
-            ] 
-          },
-          { 
-            letter: 'Q', 
-            words: [
-              { word: 'Queen', imagePrompt: 'A cute, simple illustration of a friendly queen with a crown for a children\'s alphabet book.', phonics: ['/kwiːn/'], sentence: 'The queen is kind.' },
-              { word: 'Quiet', imagePrompt: 'A cute, simple illustration of a child being quiet for a children\'s alphabet book.', phonics: ['/ˈkwaɪət/'], sentence: 'Be quiet please.' },
-            ] 
-          },
-          { 
-            letter: 'R', 
-            words: [
-              { word: 'Robot', imagePrompt: 'A cute, simple illustration of a friendly, colorful robot for a children\'s alphabet book.', phonics: ['/ˈroʊ.bɒt/'], sentence: 'The robot can walk.' },
-              { word: 'Ruler', imagePrompt: 'A cute, simple illustration of a school ruler for a children\'s alphabet book.', phonics: ['/ˈruːlər/'], sentence: 'Use a ruler.' },
-              { word: 'Room', imagePrompt: 'A cute, simple illustration of a childs bedroom for a children\'s alphabet book.', phonics: ['/ruːm/'], sentence: 'This is my room.' },
-            ] 
-          },
-          { 
-            letter: 'S', 
-            words: [
-              { word: 'Sun', imagePrompt: 'A cute, simple illustration of a smiling sun in the sky for a children\'s alphabet book.', phonics: ['/s/', '/ʌ/', '/n/'], sentence: 'The sun is hot.' },
-              { word: 'Sister', imagePrompt: 'A cute, simple illustration of a happy sister for a children\'s alphabet book.', phonics: ['/ˈsɪstər/'], sentence: 'She is my sister.' },
-              { word: 'Socks', imagePrompt: 'A cute, simple illustration of a pair of colorful socks for a children\'s alphabet book.', phonics: ['/sɒks/'], sentence: 'I wear socks.' },
-              { word: 'Snake', imagePrompt: 'A cute, simple illustration of a friendly green snake for a children\'s alphabet book.', phonics: ['/sneɪk/'], sentence: 'A snake is long.' },
-            ] 
-          },
-          { 
-            letter: 'T', 
-            words: [
-              { word: 'Turtle', imagePrompt: 'A cute, simple illustration of a slow and steady turtle for a children\'s alphabet book.', phonics: ['/ˈtɜːr.təl/'], sentence: 'The turtle is slow.' },
-              { word: 'Table', imagePrompt: 'A cute, simple illustration of a wooden table for a children\'s alphabet book.', phonics: ['/ˈteɪbəl/'], sentence: 'The book is on the table.' },
-              { word: 'Teacher', imagePrompt: 'A cute, simple illustration of a friendly teacher for a children\'s alphabet book.', phonics: ['/ˈtiːtʃər/'], sentence: 'My teacher is nice.' },
-              { word: 'Tiger', imagePrompt: 'A cute, simple illustration of a tiger cub for a children\'s alphabet book.', phonics: ['/ˈtaɪɡər/'], sentence: 'The tiger is big.' },
-            ] 
-          },
-          { 
-            letter: 'U', 
-            words: [
-              { word: 'Umbrella', imagePrompt: 'A cute, simple illustration of a colorful umbrella for a children\'s alphabet book.', phonics: ['/ʌmˈbrɛl.ə/'], sentence: 'I have an umbrella.' },
-              { word: 'Uncle', imagePrompt: 'A cute, simple illustration of a happy uncle for a children\'s alphabet book.', phonics: ['/ˈʌŋkəl/'], sentence: 'My uncle is funny.' },
-            ] 
-          },
-          { 
-            letter: 'V', 
-            words: [
-              { word: 'Volcano', imagePrompt: 'A cute, simple illustration of a friendly, cartoon volcano for a children\'s alphabet book.', phonics: ['/vɒlˈkeɪ.noʊ/'], sentence: 'The volcano is hot.' },
-              { word: 'Van', imagePrompt: 'A cute, simple illustration of a blue van for a children\'s alphabet book.', phonics: ['/væn/'], sentence: 'The van is big.' },
-              { word: 'Violin', imagePrompt: 'A cute, simple illustration of a violin for a children\'s alphabet book.', phonics: ['/ˌvaɪəˈlɪn/'], sentence: 'I play the violin.' },
-            ] 
-          },
-          { 
-            letter: 'W', 
-            words: [
-              { word: 'Whale', imagePrompt: 'A cute, simple illustration of a giant, happy whale for a children\'s alphabet book.', phonics: ['/weɪl/'], sentence: 'The whale is big.' },
-              { word: 'Watch', imagePrompt: 'A cute, simple illustration of a colorful watch for a children\'s alphabet book.', phonics: ['/wɒtʃ/'], sentence: 'I have a new watch.' },
-              { word: 'Watermelon', imagePrompt: 'A cute, simple illustration of a slice of watermelon for a children\'s alphabet book.', phonics: ['/ˈwɔːtərˌmɛlən/'], sentence: 'Watermelon is sweet.' },
-            ] 
-          },
-          { 
-            letter: 'X', 
-            words: [
-              { word: 'Xylophone', imagePrompt: 'A cute, simple illustration of a colorful xylophone for a children\'s alphabet book.', phonics: ['/ˈzaɪ.lə.foʊn/'], sentence: 'I play the xylophone.' },
-              { word: 'Box', imagePrompt: 'A cute, simple illustration of a cardboard box for a children\'s alphabet book.', phonics: ['/bɒks/'], sentence: 'What is in the box.' },
-              { word: 'Fox', imagePrompt: 'A cute, simple illustration of a friendly fox for a children\'s alphabet book.', phonics: ['/fɒks/'], sentence: 'The fox is quick.' },
-            ] 
-          },
-          { 
-            letter: 'Y', 
-            words: [
-              { word: 'Yacht', imagePrompt: 'A cute, simple illustration of a small yacht sailing on water for a children\'s alphabet book.', phonics: ['/jɒt/'], sentence: 'The yacht is on the water.' },
-              { word: 'Yoyo', imagePrompt: 'A cute, simple illustration of a colorful yoyo for a children\'s alphabet book.', phonics: ['/ˈjoʊˌjoʊ/'], sentence: 'I can play with a yoyo.' },
-            ] 
-          },
-          { 
-            letter: 'Z', 
-            words: [
-              { word: 'Zebra', imagePrompt: 'A cute, simple illustration of a zebra with bold stripes for a children\'s alphabet book.', phonics: ['/ˈziː.brə/'], sentence: 'The zebra has stripes.' },
-              { word: 'Zoo', imagePrompt: 'A cute, simple illustration of a zoo entrance for a children\'s alphabet book.', phonics: ['/zuː/'], sentence: 'We go to the zoo.' },
-            ] 
-          },
-        ];
 
-        // --- From hooks/useTextToSpeech.ts ---
-        const useTextToSpeech = () => {
-          const [isSpeaking, setIsSpeaking] = useState(false);
-          const [isSupported, setIsSupported] = useState(false);
-          const voices = useRef([]);
+// --- Utility Functions ---
+const shuffleArray = (array) => {
+  return [...array].sort(() => Math.random() - 0.5);
+};
 
-          useEffect(() => {
-            if ('speechSynthesis' in window) {
-              setIsSupported(true);
-              const handleVoicesChanged = () => {
-                voices.current = window.speechSynthesis.getVoices().filter(voice => voice.lang.startsWith('en'));
-              };
-              window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
-              handleVoicesChanged(); // In case voices are already loaded
-            }
-          }, []);
+// --- From components/Icons.tsx ---
+const SoundIcon = ({ className }) => (
+  React.createElement('svg', {
+    xmlns: "http://www.w3.org/2000/svg",
+    className: className,
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    strokeWidth: 2
+  }, React.createElement('path', {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+  }))
+);
 
-          const speak = useCallback((text, onEndCallback) => {
-            if (!isSupported) {
-              if (onEndCallback) onEndCallback();
-              return;
-            }
-            if (window.speechSynthesis.speaking) {
-              window.speechSynthesis.cancel();
-            }
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.voice = voices.current.find(voice => voice.name.includes('Google US English')) || voices.current[0];
-            utterance.pitch = 1.1;
-            utterance.rate = 0.9;
-            utterance.onstart = () => setIsSpeaking(true);
-            utterance.onend = () => {
-              setIsSpeaking(false);
-              if (onEndCallback) onEndCallback();
-            };
-            utterance.onerror = () => setIsSpeaking(false);
-            window.speechSynthesis.speak(utterance);
-          }, [isSupported]);
-          
-          useEffect(() => {
-            return () => {
-              if (isSupported && window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-              }
-            };
-          }, [isSupported]);
+const ArrowLeftIcon = ({ className }) => (
+  React.createElement('svg', {
+    xmlns: "http://www.w3.org/2000/svg",
+    className: className,
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    strokeWidth: 2
+  }, React.createElement('path', {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M10 19l-7-7m0 0l7-7m-7 7h18"
+  }))
+);
 
-          return { speak, isSpeaking, isSupported };
-        };
+const ArrowRightIcon = ({ className }) => (
+  React.createElement('svg', {
+    xmlns: "http://www.w3.org/2000/svg",
+    className: className,
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    strokeWidth: 2
+  }, React.createElement('path', {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M14 5l7 7m0 0l-7 7m7-7H3"
+  }))
+);
 
-        // --- From services/geminiService.ts ---
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const imageCache = new Map(); // Performance: Cache generated images
+// --- From hooks/useTextToSpeech.ts ---
+const useTextToSpeech = () => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSupported, setIsSupported] = useState(false);
+  const voices = useRef([]);
 
-        const generateImage = async (prompt) => {
-            if (imageCache.has(prompt)) {
-                return imageCache.get(prompt);
-            }
-            try {
-                const response = await ai.models.generateImages({
-                model: 'imagen-4.0-generate-001',
-                prompt: prompt,
-                config: {
-                    numberOfImages: 1,
-                    outputMimeType: 'image/png',
-                    aspectRatio: '4:3',
-                },
-                });
-                if (response.generatedImages && response.generatedImages.length > 0) {
-                    const base64ImageBytes = response.generatedImages[0].image.imageBytes;
-                    const imageUrl = `data:image/png;base64,${base64ImageBytes}`;
-                    imageCache.set(prompt, imageUrl); // Cache the new image
-                    return imageUrl;
-                } else {
-                    throw new Error("No image was generated.");
-                }
-            } catch (error) {
-                console.error("Error generating image with Gemini:", error);
-                const wordForSeed = prompt.split('of a ')[1]?.split(' ')[0] || 'default';
-                const fallbackUrl = `https://picsum.photos/seed/${wordForSeed}/600/400`;
-                imageCache.set(prompt, fallbackUrl); // Cache the fallback to prevent retries
-                return fallbackUrl;
-            }
-        };
-        
-        // --- Helper Functions ---
-        const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      setIsSupported(true);
+      const handleVoicesChanged = () => {
+        voices.current = window.speechSynthesis.getVoices().filter(voice => voice.lang.startsWith('en'));
+      };
+      window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+      handleVoicesChanged(); 
+    }
+  }, []);
 
-        // --- From components/Icons.tsx ---
-        const SoundIcon = ({ className }) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className, fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
-          React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" })
-        );
-        const ArrowLeftIcon = ({ className }) => React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className, fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
-          React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", d: "M10 19l-7-7m0 0l7-7m-7 7h18" })
-        );
+  const speak = useCallback((text, onEndCallback) => {
+    if (!isSupported) {
+      if (onEndCallback) onEndCallback();
+      return;
+    }
 
-        // --- From components/Header.tsx ---
-        const Header = () => {
-          return React.createElement('header', { className: "text-center" },
-            React.createElement('h1', { className: "text-3xl sm:text-4xl md:text-5xl font-black text-indigo-600 tracking-tight" }, "Interactive Alphabet Adventure"),
-            React.createElement('p', { className: "text-lg text-slate-600 mt-2" }, "Learn letters and sounds!")
-          );
-        };
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
 
-        // --- From components/BackButton.tsx ---
-        const BackButton = ({ onClick }) => {
-          return React.createElement('button', {
-              onClick: onClick,
-              className: "flex items-center gap-2 bg-white text-slate-600 font-bold py-2 px-4 rounded-full shadow-md hover:shadow-lg hover:bg-slate-50 transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-300",
-              'aria-label': "Go back"
-            },
-            React.createElement(ArrowLeftIcon, { className: "w-5 h-5" }),
-            React.createElement('span', null, "Back")
-          );
-        };
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voices.current.find(voice => voice.name.includes('Google US English')) || voices.current[0];
+    utterance.pitch = 1.1;
+    utterance.rate = 0.9;
 
-        // --- From components/PhonicsButton.tsx ---
-        const PhonicsButton = ({ phoneme }) => {
-          const { speak, isSpeaking } = useTextToSpeech();
-          const handleSpeak = () => {
-            const soundToSpeak = phoneme.replace(/\//g, '');
-            speak(soundToSpeak);
-          };
-          return React.createElement('button', {
-            onClick: handleSpeak,
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      if (onEndCallback) onEndCallback();
+    };
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  }, [isSupported]);
+  
+  useEffect(() => {
+    return () => {
+      if (isSupported && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [isSupported]);
+
+  return { speak, isSpeaking, isSupported };
+};
+
+// --- From components/BackButton.tsx ---
+const BackButton = ({ onClick }) => {
+  return React.createElement('button', {
+      onClick: onClick,
+      className: "flex items-center gap-2 bg-white text-slate-600 font-bold py-2 px-4 rounded-full shadow-md hover:shadow-lg hover:bg-slate-50 transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-300",
+      'aria-label': "Go back"
+    },
+    React.createElement(ArrowLeftIcon, { className: "w-5 h-5" }),
+    React.createElement('span', null, "Back")
+  );
+};
+
+// --- From components/PhonicsButton.tsx ---
+const PhonicsButton = ({ phoneme }) => {
+  const { speak, isSpeaking } = useTextToSpeech();
+  
+  const handleSpeak = () => {
+    const soundToSpeak = phoneme.replace(/\//g, '');
+    speak(soundToSpeak);
+  };
+
+  return React.createElement('button', {
+      onClick: handleSpeak,
+      disabled: isSpeaking,
+      className: "bg-rose-500 text-white font-bold py-3 px-5 rounded-lg shadow-md hover:bg-rose-600 transition-all transform hover:scale-110 disabled:opacity-70 disabled:cursor-not-allowed"
+    },
+    phoneme
+  );
+};
+
+// --- From components/SpellingGame.tsx ---
+const SpellingGame = ({ word, onCorrect, enabled }) => {
+  const { speak } = useTextToSpeech();
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  const [feedback, setFeedback] = useState(null);
+
+  const shuffledLetters = useMemo(() => {
+    return shuffleArray(word.split('')).map((letter, index) => ({ letter, originalIndex: index }));
+  }, [word]);
+
+  useEffect(() => {
+    setGuessedLetters([]);
+    setFeedback(null);
+    if(enabled) {
+      speak(`Let's spell ${word}`);
+    }
+  }, [word, enabled, speak]);
+
+  const handleLetterClick = (letter, index) => {
+    if (!enabled) return;
+    setGuessedLetters([...guessedLetters, { letter, index }]);
+  };
+
+  const handleUndo = () => {
+    if (!enabled) return;
+    setGuessedLetters(guessedLetters.slice(0, -1));
+  };
+  
+  useEffect(() => {
+    if (guessedLetters.length === word.length && feedback === null) {
+      const currentGuess = guessedLetters.map(l => l.letter).join('');
+      if (currentGuess.toLowerCase() === word.toLowerCase()) {
+        setFeedback('correct');
+        speak('Great!');
+        setTimeout(onCorrect, 1200);
+      } else {
+        setFeedback('incorrect');
+        speak('Oops, try again.');
+        setTimeout(() => {
+          setGuessedLetters([]);
+          setFeedback(null);
+        }, 1500);
+      }
+    }
+  }, [guessedLetters, word, onCorrect, speak, feedback]);
+
+  const feedbackClasses = feedback === 'correct' ? 'border-green-500 animate-tada' : feedback === 'incorrect' ? 'border-red-500 animate-shake' : 'border-gray-400';
+
+  return React.createElement('div', null,
+    React.createElement('h3', { className: "text-xl font-semibold text-amber-600 mb-3 text-center" }, 
+      "Spell the word: ", 
+      React.createElement('span', { className: "font-black capitalize" }, word)
+    ),
+    React.createElement('div', { className: `min-h-[64px] w-full p-2 bg-white rounded-lg border-2 border-dashed flex items-center justify-center text-3xl font-bold tracking-widest my-2 flex-wrap gap-2 ${feedbackClasses}` },
+      guessedLetters.length > 0 ? guessedLetters.map((item, i) =>
+        React.createElement('div', { key: i, className: "w-12 h-12 flex items-center justify-center bg-green-200 text-green-800 rounded-lg" }, item.letter)
+      ) : React.createElement('span', { className: "text-gray-400" }, "Click letters below")
+    ),
+    React.createElement('div', { className: "flex flex-wrap gap-3 justify-center mt-4" },
+      ...shuffledLetters.map(({ letter, originalIndex }) =>
+        React.createElement('button', {
+            key: originalIndex,
+            onClick: () => handleLetterClick(letter, originalIndex),
+            disabled: !enabled || guessedLetters.some(gl => gl.index === originalIndex),
+            className: "w-12 h-12 text-2xl bg-sky-500 text-white font-bold rounded-lg shadow-md hover:bg-sky-600 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+          },
+          letter
+        )
+      ),
+      React.createElement('button', { onClick: handleUndo, disabled: !enabled || guessedLetters.length === 0, className: "w-12 h-12 text-2xl bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 disabled:opacity-30" }, '↶')
+    )
+  );
+};
+
+// --- From components/SentenceGame.tsx ---
+const SentenceGame = ({ sentence, onCorrect, enabled }) => {
+  const { speak, isSpeaking } = useTextToSpeech();
+  const [guessedWords, setGuessedWords] = useState([]);
+  const [feedback, setFeedback] = useState(null);
+
+  const correctWords = useMemo(() => sentence.replace(/[.?!]$/, '').split(' '), [sentence]);
+  const shuffledWords = useMemo(() => {
+    return shuffleArray(correctWords).map((word, index) => ({ word, originalIndex: index }));
+  }, [correctWords]);
+
+  useEffect(() => {
+    setGuessedWords([]);
+    setFeedback(null);
+    if(enabled) {
+      speak(`Now, build a sentence: ${sentence}`);
+    }
+  }, [sentence, enabled, speak]);
+
+  const handleWordClick = (word, index) => {
+    if (!enabled) return;
+    setGuessedWords([...guessedWords, { word, index }]);
+  };
+  
+  const handleUndo = () => {
+    if (!enabled) return;
+    setGuessedWords(guessedWords.slice(0, -1));
+  };
+  
+  useEffect(() => {
+    if (guessedWords.length === correctWords.length && feedback === null) {
+      const currentGuess = guessedWords.map(w => w.word).join(' ');
+      if (currentGuess === correctWords.join(' ')) {
+        setFeedback('correct');
+        speak('Excellent!');
+        setTimeout(onCorrect, 1200);
+      } else {
+        setFeedback('incorrect');
+        speak('Not quite, try again.');
+        setTimeout(() => {
+          setGuessedWords([]);
+          setFeedback(null);
+        }, 1500);
+      }
+    }
+  }, [guessedWords, correctWords, onCorrect, speak, feedback]);
+
+  const feedbackClasses = feedback === 'correct' ? 'border-green-500 animate-tada' : feedback === 'incorrect' ? 'border-red-500 animate-shake' : 'border-gray-400';
+
+  return React.createElement('div', null,
+    React.createElement('div', { className: "flex items-center justify-center gap-2 mb-3" },
+      React.createElement('h3', { className: "text-xl font-semibold text-sky-600" }, "Build the sentence!"),
+      React.createElement('button', {
+          onClick: () => speak(sentence),
+          disabled: !enabled || isSpeaking,
+          className: "text-slate-500 hover:text-sky-600 transition-colors disabled:opacity-50",
+          'aria-label': "Listen to the sentence again"
+        },
+        React.createElement(SoundIcon, { className: "w-6 h-6" })
+      )
+    ),
+    React.createElement('div', { className: `min-h-[64px] w-full p-3 bg-white rounded-lg border-2 border-dashed flex items-center justify-center text-xl font-semibold my-2 flex-wrap gap-2 ${feedbackClasses}` },
+      guessedWords.length > 0 ? guessedWords.map((item, i) =>
+        React.createElement('div', { key: i, className: "p-2 bg-green-200 text-green-800 rounded-lg" }, item.word)
+      ) : React.createElement('span', { className: "text-gray-400" }, "Click words below")
+    ),
+    React.createElement('div', { className: "flex flex-wrap gap-3 justify-center mt-4" },
+      ...shuffledWords.map(({ word, originalIndex }) =>
+        React.createElement('button', {
+            key: originalIndex,
+            onClick: () => handleWordClick(word, originalIndex),
+            disabled: !enabled || guessedWords.some(gw => gw.index === originalIndex),
+            className: "p-3 bg-amber-500 text-white font-bold rounded-lg shadow-md hover:bg-amber-600 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+          },
+          word
+        )
+      ),
+      React.createElement('button', { onClick: handleUndo, disabled: !enabled || guessedWords.length === 0, className: "p-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 disabled:opacity-30" }, '↶')
+    )
+  );
+};
+
+// --- From components/WordCard.tsx ---
+const WordCard = ({ wordData, onSelect }) => {
+  return React.createElement('button', {
+      onClick: onSelect,
+      className: "bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-400"
+    },
+    React.createElement('div', { className: "relative aspect-[4/3] bg-indigo-100 flex items-center justify-center" },
+      React.createElement('span', { className: "text-8xl", role: "img", 'aria-label': wordData.word },
+        wordData.emoji
+      )
+    ),
+    React.createElement('div', { className: "p-4" },
+      React.createElement('h3', { className: "text-2xl font-bold text-slate-700 text-center capitalize" }, wordData.word)
+    )
+  );
+};
+
+// --- From components/ActivityScreen.tsx ---
+const ActivityScreen = ({ wordData, letterData, onBack, onComplete }) => {
+  const [gameState, setGameState] = useState('phonics');
+  const { speak, isSpeaking } = useTextToSpeech();
+  
+  useEffect(() => {
+    setGameState('phonics');
+  }, [wordData]);
+
+  const handleNext = () => {
+    if (gameState === 'phonics') setGameState('spelling');
+    else if (gameState === 'spelling') setGameState('sentence');
+    else if (gameState === 'sentence') {
+      setGameState('done');
+      setTimeout(() => onComplete(), 2000);
+    }
+  };
+
+  const playAllSounds = () => {
+    if (isSpeaking || gameState !== 'phonics') return;
+    
+    const soundsToPlay = [...wordData.phonics, wordData.word];
+    let soundIndex = 0;
+
+    const playNext = () => {
+      if (soundIndex < soundsToPlay.length) {
+        const sound = soundsToPlay[soundIndex];
+        soundIndex++;
+        speak(sound, playNext);
+      }
+    };
+    
+    playNext();
+  };
+
+  return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8 space-y-6" },
+    React.createElement('div', { className: "flex items-center justify-between" },
+      React.createElement(BackButton, { onClick: onBack }),
+      React.createElement('div', { className: "flex items-center gap-4" },
+        React.createElement('h2', { className: "text-4xl md:text-6xl font-black text-slate-700 capitalize" },
+          wordData.word
+        ),
+        React.createElement('button', {
+            onClick: () => speak(wordData.word),
             disabled: isSpeaking,
-            className: "bg-rose-500 text-white font-bold py-3 px-5 rounded-lg shadow-md hover:bg-rose-600 transition-all transform hover:scale-110 disabled:opacity-70 disabled:cursor-not-allowed"
-          }, phoneme);
-        };
+            className: "text-slate-500 hover:text-indigo-600 transition-colors disabled:opacity-50",
+            'aria-label': `Pronounce ${wordData.word}`
+          },
+          React.createElement(SoundIcon, { className: "w-8 h-8" })
+        )
+      ),
+      React.createElement('div', { className: "w-24" })
+    ),
+    React.createElement('div', { className: `p-4 bg-rose-100 rounded-lg text-center ${gameState !== 'phonics' ? 'opacity-50' : ''}` },
+      React.createElement('h3', { className: "text-xl font-semibold text-rose-600 mb-3" }, "Learn the sounds"),
+      React.createElement('div', { className: "flex flex-wrap gap-3 justify-center" },
+        wordData.phonics.map((phoneme, index) =>
+          React.createElement(PhonicsButton, { key: index, phoneme: phoneme.toUpperCase() })
+        )
+      ),
+      gameState === 'phonics' && React.createElement('div', { className: "flex justify-center items-center gap-4 mt-4" },
+        React.createElement('button', {
+            onClick: playAllSounds,
+            disabled: isSpeaking,
+            className: "bg-indigo-500 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-indigo-600 transition-transform transform hover:scale-105 disabled:opacity-50",
+            'aria-label': "Hear the word spelled out"
+          },
+          "Spell It Out"
+        ),
+        React.createElement('button', { onClick: handleNext, className: "bg-rose-500 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-rose-600 transition-transform transform hover:scale-105" },
+          "Next Game"
+        )
+      )
+    ),
+    (gameState === 'spelling' || gameState === 'sentence' || gameState === 'done') && React.createElement('div', { className: `p-4 bg-amber-100 rounded-lg ${gameState !== 'spelling' ? 'opacity-50' : ''}` },
+      React.createElement(SpellingGame, { word: wordData.word, onCorrect: handleNext, enabled: gameState === 'spelling' })
+    ),
+    (gameState === 'sentence' || gameState === 'done') && React.createElement('div', { className: `p-4 bg-sky-100 rounded-lg ${gameState !== 'sentence' ? 'opacity-50' : ''}` },
+      React.createElement(SentenceGame, { sentence: wordData.sentence, onCorrect: handleNext, enabled: gameState === 'sentence' })
+    ),
+    gameState === 'done' && React.createElement('div', { className: "text-center p-8" },
+      React.createElement('h2', { className: "text-4xl font-bold text-green-500 animate-tada" }, "Well Done!"),
+      React.createElement('p', { className: "text-slate-600 mt-2" }, "Loading next word...")
+    )
+  );
+};
 
-        // --- From components/WordCard.tsx ---
-        const WordCard = ({ wordData, onSelect }) => {
-          const [imageUrl, setImageUrl] = useState(null);
-          const [isLoading, setIsLoading] = useState(true);
-          useEffect(() => {
-            let isMounted = true;
-            const fetchImage = async () => {
-              setIsLoading(true);
-              try {
-                const url = await generateImage(wordData.imagePrompt);
-                if (isMounted) setImageUrl(url);
-              } catch (error) {
-                console.error('Failed to generate image:', error);
-              } finally {
-                if (isMounted) setIsLoading(false);
-              }
-            };
-            fetchImage();
-            return () => { isMounted = false; };
-          }, [wordData.imagePrompt]);
-          
-          return React.createElement('button', {
-              onClick: onSelect,
-              className: "bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-400"
-            },
-            React.createElement('div', { className: "relative aspect-[4/3] bg-gray-200" },
-              isLoading && React.createElement('div', { className: "absolute inset-0 flex items-center justify-center animate-pulse" },
-                React.createElement('div', { className: "text-gray-500" }, "Generating Art...")
-              ),
-              imageUrl && React.createElement('img', { src: imageUrl, alt: wordData.word, className: "w-full h-full object-cover" })
-            ),
-            React.createElement('div', { className: "p-4" },
-              React.createElement('h3', { className: "text-2xl font-bold text-slate-700 text-center capitalize" }, wordData.word)
-            )
-          );
-        };
+// --- From components/WordSelectionScreen.tsx ---
+const WordSelectionScreen = ({ letterData, onSelectWord, onBack, onPreviousLetter, onNextLetter }) => {
+  return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8" },
+    React.createElement('div', { className: "relative flex items-center justify-center mb-6" },
+      React.createElement('div', { className: "absolute left-0" },
+        React.createElement(BackButton, { onClick: onBack })
+      ),
+      React.createElement('div', { className: "flex items-center gap-4" },
+        React.createElement('button', {
+            onClick: onPreviousLetter, 
+            className: "p-3 bg-white rounded-full shadow-md hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400",
+            'aria-label': "Previous letter"
+          },
+          React.createElement(ArrowLeftIcon, { className: "w-6 h-6 text-slate-600" })
+        ),
+        React.createElement('h2', { className: "text-3xl md:text-4xl font-bold text-slate-700 text-center w-48 md:w-64" },
+          "Words for ", React.createElement('span', { className: "text-indigo-500" }, letterData.letter)
+        ),
+        React.createElement('button', {
+            onClick: onNextLetter, 
+            className: "p-3 bg-white rounded-full shadow-md hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400",
+            'aria-label': "Next letter"
+          },
+          React.createElement(ArrowRightIcon, { className: "w-6 h-6 text-slate-600" })
+        )
+      )
+    ),
+    React.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" },
+      letterData.words.map((word) =>
+        React.createElement(WordCard, { key: word.word, wordData: word, onSelect: () => onSelectWord(word) })
+      )
+    )
+  );
+};
 
-        // --- From components/SpellingGame.tsx ---
-        const SpellingGame = ({ word, onCorrect, enabled }) => {
-          const { speak } = useTextToSpeech();
-          const [guessedLetters, setGuessedLetters] = useState([]);
-          const [feedback, setFeedback] = useState(null);
-          const shuffledLetters = useMemo(() => shuffleArray(word.split('')).map((letter, index) => ({ letter, originalIndex: index })), [word]);
+// --- From components/LetterSelectionScreen.tsx ---
+const LetterSelectionScreen = ({ onSelectLetter }) => {
+  const colors = ['bg-orange-400 hover:bg-orange-500', 'bg-teal-400 hover:bg-teal-500', 'bg-violet-400 hover:bg-violet-500', 'bg-rose-400 hover:bg-rose-500', 'bg-sky-400 hover:bg-sky-500'];
 
-          useEffect(() => {
-            setGuessedLetters([]);
-            setFeedback(null);
-            if (enabled) {
-              speak(`Let's spell ${word}`);
+  return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8" },
+    React.createElement('h2', { className: "text-2xl md:text-3xl font-bold text-center text-slate-700 mb-6" }, "Choose a letter to start!"),
+    React.createElement('div', { className: "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-3 md:gap-4" },
+      ALPHABET_DATA.map((item, index) =>
+        React.createElement('button', {
+            key: item.letter,
+            onClick: () => onSelectLetter(item),
+            className: `w-full aspect-square text-white text-3xl font-black rounded-2xl shadow-lg transform hover:scale-110 focus:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-400 transition-transform ${colors[index % colors.length]}`,
+            'aria-label': `Learn about the letter ${item.letter}`
+          },
+          item.letter
+        )
+      )
+    )
+  );
+};
+
+// --- From components/Header.tsx ---
+const Header = () => {
+  return React.createElement('header', { className: "text-center" },
+    React.createElement('h1', { className: "text-4xl md:text-5xl font-black text-indigo-600 tracking-tight" },
+      "Interactive Alphabet Adventure"
+    ),
+    React.createElement('p', { className: "text-lg text-slate-600 mt-2" },
+      "Learn letters and sounds!"
+    )
+  );
+};
+
+// --- From App.tsx ---
+const App = () => {
+  const [screen, setScreen] = useState('letter-selection');
+  const [selectedLetter, setSelectedLetter] = useState(null);
+  const [selectedWord, setSelectedWord] = useState(null);
+
+  const handleSelectLetter = (letterData) => {
+    setSelectedLetter(letterData);
+    setScreen('word-selection');
+  };
+
+  const handleSelectWord = (wordData) => {
+    setSelectedWord(wordData);
+    setScreen('activity');
+  };
+
+  const handleBackToLetters = () => {
+    setSelectedLetter(null);
+    setScreen('letter-selection');
+  };
+
+  const handleBackToWords = () => {
+    setSelectedWord(null);
+    setScreen('word-selection');
+  };
+  
+  const handleNextLetter = () => {
+    if (!selectedLetter) return;
+    const currentIndex = ALPHABET_DATA.findIndex(l => l.letter === selectedLetter.letter);
+    const nextIndex = (currentIndex + 1) % ALPHABET_DATA.length;
+    setSelectedLetter(ALPHABET_DATA[nextIndex]);
+  };
+
+  const handlePreviousLetter = () => {
+    if (!selectedLetter) return;
+    const currentIndex = ALPHABET_DATA.findIndex(l => l.letter === selectedLetter.letter);
+    const prevIndex = (currentIndex - 1 + ALPHABET_DATA.length) % ALPHABET_DATA.length;
+    setSelectedLetter(ALPHABET_DATA[prevIndex]);
+  };
+
+  const currentView = useMemo(() => {
+    switch (screen) {
+      case 'word-selection':
+        return selectedLetter ? React.createElement(WordSelectionScreen, {
+          letterData: selectedLetter, 
+          onSelectWord: handleSelectWord, 
+          onBack: handleBackToLetters,
+          onPreviousLetter: handlePreviousLetter,
+          onNextLetter: handleNextLetter
+        }) : null;
+      case 'activity':
+        return selectedWord && selectedLetter ? React.createElement(ActivityScreen, {
+          letterData: selectedLetter,
+          wordData: selectedWord, 
+          onBack: handleBackToWords, 
+          onComplete: () => {
+            const currentWords = selectedLetter.words;
+            const currentIndex = currentWords.findIndex(w => w.word === selectedWord.word);
+            if (currentIndex < currentWords.length - 1) {
+              handleSelectWord(currentWords[currentIndex + 1]);
+            } else {
+              handleBackToWords();
             }
-          }, [word, enabled, speak]);
+          }
+        }) : null;
+      case 'letter-selection':
+      default:
+        return React.createElement(LetterSelectionScreen, { onSelectLetter: handleSelectLetter });
+    }
+  }, [screen, selectedLetter, selectedWord]);
 
-          const handleLetterClick = (letter, index) => {
-            if (!enabled) return;
-            setGuessedLetters([...guessedLetters, { letter, index }]);
-          };
+  return React.createElement('div', { className: "bg-gradient-to-br from-sky-100 to-indigo-200 min-h-screen flex flex-col items-center p-4 overflow-y-auto antialiased" },
+    React.createElement('div', { className: "w-full max-w-4xl mx-auto" },
+      React.createElement(Header, null),
+      React.createElement('main', { className: "mt-6" },
+        currentView
+      )
+    )
+  );
+};
 
-          const handleUndo = () => {
-            if (!enabled) return;
-            setGuessedLetters(guessedLetters.slice(0, -1));
-          };
+// --- From index.tsx ---
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
 
-          useEffect(() => {
-            if (guessedLetters.length === word.length) {
-              const currentGuess = guessedLetters.map(l => l.letter).join('');
-              if (currentGuess.toLowerCase() === word.toLowerCase()) {
-                setFeedback('correct');
-                speak('Great!', onCorrect);
-              } else {
-                setFeedback('incorrect');
-                speak('Oops, try again.');
-                setTimeout(() => {
-                  setGuessedLetters([]);
-                  setFeedback(null);
-                }, 1500);
-              }
-            }
-          }, [guessedLetters, word, onCorrect, speak]);
-
-          const feedbackClasses = feedback === 'correct' ? 'border-green-500 animate-tada' : feedback === 'incorrect' ? 'border-red-500 animate-shake' : 'border-gray-400';
-
-          return React.createElement('div', null,
-            React.createElement('h3', { className: "text-xl font-semibold text-amber-600 mb-3 text-center" }, 
-              "Spell the word: ", 
-              React.createElement('span', { className: "font-black capitalize" }, word)
-            ),
-            React.createElement('div', { className: `min-h-[64px] w-full p-2 bg-white rounded-lg border-2 border-dashed flex items-center justify-center text-3xl font-bold tracking-widest my-2 flex-wrap gap-2 ${feedbackClasses}` },
-              guessedLetters.length > 0 ? guessedLetters.map((item, i) =>
-                React.createElement('div', { key: i, className: "w-12 h-12 flex items-center justify-center bg-green-200 text-green-800 rounded-lg" }, item.letter)
-              ) : React.createElement('span', { className: "text-gray-400" }, "Click letters below")
-            ),
-            React.createElement('div', { className: "flex flex-wrap gap-3 justify-center mt-4" },
-              ...shuffledLetters.map(({ letter, originalIndex }) =>
-                React.createElement('button', {
-                  key: originalIndex,
-                  onClick: () => handleLetterClick(letter, originalIndex),
-                  disabled: !enabled || guessedLetters.some(gl => gl.index === originalIndex),
-                  className: "w-12 h-12 text-2xl bg-sky-500 text-white font-bold rounded-lg shadow-md hover:bg-sky-600 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
-                }, letter)
-              ),
-              React.createElement('button', { onClick: handleUndo, disabled: !enabled || guessedLetters.length === 0, className: "w-12 h-12 text-2xl bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 disabled:opacity-30" }, '↶')
-            )
-          );
-        };
-        
-        // --- From components/SentenceGame.tsx ---
-        const SentenceGame = ({ sentence, onCorrect, enabled }) => {
-            const { speak } = useTextToSpeech();
-            const [guessedWords, setGuessedWords] = useState([]);
-            const [feedback, setFeedback] = useState(null);
-            const correctWords = useMemo(() => sentence.replace(/[.?!]$/, '').split(' '), [sentence]);
-            const shuffledWords = useMemo(() => shuffleArray(correctWords).map((word, index) => ({ word, originalIndex: index })), [correctWords]);
-
-            useEffect(() => {
-                setGuessedWords([]);
-                setFeedback(null);
-                if(enabled) {
-                    speak(`Now, build a sentence: ${sentence}`);
-                }
-            }, [sentence, enabled, speak]);
-
-            const handleWordClick = (word, index) => {
-                if (!enabled) return;
-                setGuessedWords([...guessedWords, { word, index }]);
-            };
-            
-            const handleUndo = () => {
-                if (!enabled) return;
-                setGuessedWords(guessedWords.slice(0, -1));
-            };
-
-            useEffect(() => {
-                if (guessedWords.length === correctWords.length) {
-                    const currentGuess = guessedWords.map(w => w.word).join(' ');
-                    if (currentGuess === correctWords.join(' ')) {
-                        setFeedback('correct');
-                        speak('Excellent!', onCorrect);
-                    } else {
-                        setFeedback('incorrect');
-                        speak('Not quite, try again.');
-                        setTimeout(() => {
-                            setGuessedWords([]);
-                            setFeedback(null);
-                        }, 1500);
-                    }
-                }
-            }, [guessedWords, correctWords, onCorrect, speak]);
-
-            const feedbackClasses = feedback === 'correct' ? 'border-green-500 animate-tada' : feedback === 'incorrect' ? 'border-red-500 animate-shake' : 'border-gray-400';
-
-            return React.createElement('div', null,
-                React.createElement('h3', { className: "text-xl font-semibold text-sky-600 mb-3 text-center" }, "Build the sentence!"),
-                React.createElement('div', { className: `min-h-[64px] w-full p-3 bg-white rounded-lg border-2 border-dashed flex items-center justify-center text-xl font-semibold my-2 flex-wrap gap-2 ${feedbackClasses}` },
-                    guessedWords.length > 0 ? guessedWords.map((item, i) => 
-                        React.createElement('div', { key: i, className: "p-2 bg-green-200 text-green-800 rounded-lg" }, item.word)
-                    ) : React.createElement('span', { className: "text-gray-400" }, "Click words below")
-                ),
-                React.createElement('div', { className: "flex flex-wrap gap-3 justify-center mt-4" },
-                    ...shuffledWords.map(({ word, originalIndex }) =>
-                        React.createElement('button', {
-                            key: originalIndex,
-                            onClick: () => handleWordClick(word, originalIndex),
-                            disabled: !enabled || guessedWords.some(gw => gw.index === originalIndex),
-                            className: "p-3 bg-amber-500 text-white font-bold rounded-lg shadow-md hover:bg-amber-600 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
-                        }, word)
-                    ),
-                    React.createElement('button', { onClick: handleUndo, disabled: !enabled || guessedWords.length === 0, className: "p-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 disabled:opacity-30" }, '↶')
-                )
-            );
-        };
-
-        // --- From components/LetterSelectionScreen.tsx ---
-        const LetterSelectionScreen = ({ onSelectLetter }) => {
-          const colors = ['bg-orange-400 hover:bg-orange-500', 'bg-teal-400 hover:bg-teal-500', 'bg-violet-400 hover:bg-violet-500', 'bg-rose-400 hover:bg-rose-500', 'bg-sky-400 hover:bg-sky-500'];
-          return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8" },
-            React.createElement('h2', { className: "text-2xl md:text-3xl font-bold text-center text-slate-700 mb-6" }, "Choose a letter to start!"),
-            React.createElement('div', { className: "grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 gap-3 md:gap-4" },
-              ALPHABET_DATA.map((item, index) =>
-                React.createElement('button', {
-                  key: item.letter,
-                  onClick: () => onSelectLetter(item),
-                  className: `w-full aspect-square text-white text-3xl font-black rounded-2xl shadow-lg transform hover:scale-110 focus:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-400 transition-transform ${colors[index % colors.length]}`,
-                  'aria-label': `Learn about the letter ${item.letter}`
-                }, item.letter)
-              )
-            )
-          );
-        };
-
-        // --- From components/WordSelectionScreen.tsx ---
-        const WordSelectionScreen = ({ letterData, onSelectWord, onBack }) => {
-          return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8" },
-            React.createElement('div', { className: "flex items-center mb-6" },
-              React.createElement(BackButton, { onClick: onBack }),
-              React.createElement('h2', { className: "text-3xl md:text-4xl font-bold text-slate-700 mx-auto" },
-                "Words for ",
-                React.createElement('span', { className: "text-indigo-500" }, letterData.letter)
-              )
-            ),
-            React.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" },
-              letterData.words.map((word) =>
-                React.createElement(WordCard, { key: word.word, wordData: word, onSelect: () => onSelectWord(word) })
-              )
-            )
-          );
-        };
-
-        // --- From components/ActivityScreen.tsx ---
-        const ActivityScreen = ({ wordData, letterData, onBack, onComplete }) => {
-          const [gameState, setGameState] = useState('phonics');
-          const { speak, isSpeaking } = useTextToSpeech();
-          
-          useEffect(() => { setGameState('phonics'); }, [wordData]);
-
-          const handleNext = () => {
-            if (gameState === 'phonics') setGameState('spelling');
-            else if (gameState === 'spelling') setGameState('sentence');
-            else if (gameState === 'sentence') {
-              setGameState('done');
-              setTimeout(() => onComplete(), 2000);
-            }
-          };
-
-          return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8 space-y-6" },
-            React.createElement('div', { className: "flex items-center justify-between" },
-              React.createElement(BackButton, { onClick: onBack }),
-              React.createElement('div', { className: "flex items-center gap-4" },
-                React.createElement('h2', { className: "text-4xl md:text-6xl font-black text-slate-700 capitalize" }, wordData.word),
-                React.createElement('button', {
-                    onClick: () => speak(wordData.word),
-                    disabled: isSpeaking,
-                    className: "text-slate-500 hover:text-indigo-600 transition-colors disabled:opacity-50",
-                    'aria-label': `Pronounce ${wordData.word}`
-                  }, React.createElement(SoundIcon, { className: "w-8 h-8" })
-                )
-              ),
-              React.createElement('div', { className: "w-24" }) // Spacer
-            ),
-            React.createElement('div', { className: `p-4 bg-rose-100 rounded-lg text-center ${gameState !== 'phonics' ? 'opacity-50' : ''}` },
-              React.createElement('h3', { className: "text-xl font-semibold text-rose-600 mb-3" }, "Learn the sounds"),
-              React.createElement('div', { className: "flex flex-wrap gap-3 justify-center" },
-                wordData.phonics.map((phoneme, index) => React.createElement(PhonicsButton, { key: index, phoneme: phoneme }))
-              ),
-              gameState === 'phonics' && React.createElement('button', { onClick: handleNext, className: "mt-4 bg-rose-500 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-rose-600 transition-transform transform hover:scale-105" }, "Next Game")
-            ),
-            (gameState === 'spelling' || gameState === 'sentence' || gameState === 'done') && React.createElement('div', { className: `p-4 bg-amber-100 rounded-lg ${gameState !== 'spelling' ? 'opacity-50' : ''}` },
-              React.createElement(SpellingGame, { word: wordData.word, onCorrect: handleNext, enabled: gameState === 'spelling' })
-            ),
-            (gameState === 'sentence' || gameState === 'done') && React.createElement('div', { className: `p-4 bg-sky-100 rounded-lg ${gameState !== 'sentence' ? 'opacity-50' : ''}` },
-              React.createElement(SentenceGame, { sentence: wordData.sentence, onCorrect: handleNext, enabled: gameState === 'sentence' })
-            ),
-            gameState === 'done' && React.createElement('div', { className: "text-center p-8" },
-              React.createElement('h2', { className: "text-4xl font-bold text-green-500 animate-tada" }, "Well Done!"),
-              React.createElement('p', { className: "text-slate-600 mt-2" }, "Loading next word...")
-            )
-          );
-        };
-
-        // --- From App.tsx ---
-        const App = () => {
-          const [screen, setScreen] = useState('letter-selection');
-          const [selectedLetter, setSelectedLetter] = useState(null);
-          const [selectedWord, setSelectedWord] = useState(null);
-
-          const handleSelectLetter = (letterData) => {
-            setSelectedLetter(letterData);
-            setScreen('word-selection');
-          };
-          const handleSelectWord = (wordData) => {
-            setSelectedWord(wordData);
-            setScreen('activity');
-          };
-          const handleBackToLetters = () => {
-            setSelectedLetter(null);
-            setScreen('letter-selection');
-          };
-          const handleBackToWords = () => {
-            setSelectedWord(null);
-            setScreen('word-selection');
-          };
-
-          const currentView = useMemo(() => {
-            switch (screen) {
-              case 'word-selection':
-                return selectedLetter ? React.createElement(WordSelectionScreen, { letterData: selectedLetter, onSelectWord: handleSelectWord, onBack: handleBackToLetters }) : null;
-              case 'activity':
-                return selectedWord && selectedLetter ? React.createElement(ActivityScreen, {
-                  letterData: selectedLetter,
-                  wordData: selectedWord,
-                  onBack: handleBackToWords,
-                  onComplete: () => {
-                    const currentWords = selectedLetter.words;
-                    const currentIndex = currentWords.findIndex(w => w.word === selectedWord.word);
-                    if (currentIndex < currentWords.length - 1) {
-                      handleSelectWord(currentWords[currentIndex + 1]);
-                    } else {
-                      handleBackToWords();
-                    }
-                  }
-                }) : null;
-              case 'letter-selection':
-              default:
-                return React.createElement(LetterSelectionScreen, { onSelectLetter: handleSelectLetter });
-            }
-          }, [screen, selectedLetter, selectedWord]);
-
-          return React.createElement('div', { className: "bg-gradient-to-br from-sky-100 to-indigo-200 min-h-screen flex flex-col items-center p-4 overflow-y-auto antialiased" },
-            React.createElement('div', { className: "w-full max-w-4xl mx-auto" },
-              React.createElement(Header, null),
-              React.createElement('main', { className: "mt-6" }, currentView)
-            )
-          );
-        };
-
-        // --- From index.tsx ---
-        const rootElement = document.getElementById('root');
-        if (!rootElement) {
-          throw new Error("Could not find root element to mount to");
-        }
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(
-          React.createElement(React.StrictMode, null, React.createElement(App))
-        );
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  React.createElement(React.StrictMode, null, React.createElement(App, null))
+);
     </script>
 </body>
 </html>
