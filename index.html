@@ -70,294 +70,276 @@ const ALPHABET_DATA = [
   {
     letter: 'A',
     words: [
-      { word: 'Apple', imagePrompt: '...', phonics: ['A','p','p','l','e'], sentence: 'I eat an apple.', emoji: '🍎' },
-      { word: 'Aunt', imagePrompt: '...', phonics: ['A','u','n','t'], sentence: 'My aunt is kind.', emoji: '👩‍🦱' },
-      { word: 'Arm', imagePrompt: '...', phonics: ['A','r','m'], sentence: 'This is my arm.', emoji: '💪' },
-      { word: 'Armchair', imagePrompt: '...', phonics: ['A','r','m','c','h','a','i','r'], sentence: 'I sit in the armchair.', emoji: '🛋️' },
+      { word: 'Apple', imagePrompt: '...', phonics: ['A','p','p','l','e'], sentence: 'I eat an apple.', emoji: '🍎', translation: { word: 'Quả táo', sentence: 'Tôi ăn một quả táo.' } },
+      { word: 'Aunt', imagePrompt: '...', phonics: ['A','u','n','t'], sentence: 'My aunt is kind.', emoji: '👩‍🦱', translation: { word: 'Cô/Dì', sentence: 'Cô của tôi rất tốt bụng.' } },
+      { word: 'Arm', imagePrompt: '...', phonics: ['A','r','m'], sentence: 'This is my arm.', emoji: '💪', translation: { word: 'Cánh tay', sentence: 'Đây là cánh tay của tôi.' } },
+      { word: 'Armchair', imagePrompt: '...', phonics: ['A','r','m','c','h','a','i','r'], sentence: 'I sit in the armchair.', emoji: '🛋️', translation: { word: 'Ghế bành', sentence: 'Tôi ngồi trên ghế bành.' } },
     ]
   },
   {
     letter: 'B',
     words: [
-      { word: 'Baby', imagePrompt: '...', phonics: ['B','a','b','y'], sentence: 'The baby is sleeping.', emoji: '👶' },
-      { word: 'Badminton', imagePrompt: '...', phonics: ['B','a','d','m','i','n','t','o','n'], sentence: 'We play badminton.', emoji: '🏸' },
-      { word: 'Bag', imagePrompt: '...', phonics: ['B','a','g'], sentence: 'This is my school bag.', emoji: '🎒' },
-      { word: 'Ball', imagePrompt: '...', phonics: ['B','a','l','l'], sentence: 'I play with a ball.', emoji: '⚽️' },
-      { word: 'Banana', imagePrompt: '...', phonics: ['B','a','n','a','n','a'], sentence: 'Monkeys like bananas.', emoji: '🍌' },
-      { word: 'Basketball', imagePrompt: '...', phonics: ['B','a','s','k','e','t','b','a','l','l'], sentence: 'He plays basketball.', emoji: '🏀' },
-      { word: 'Bath', imagePrompt: '...', phonics: ['B','a','t','h'], sentence: 'I take a bath.', emoji: '🛁' },
-      { word: 'Bathroom', imagePrompt: '...', phonics: ['B','a','t','h','r','o','o','m'], sentence: 'The bathroom is clean.', emoji: '🚽' },
-      { word: 'Bear', imagePrompt: '...', phonics: ['B','e','a','r'], sentence: 'A bear lives in the forest.', emoji: '🐻' },
-      { word: 'Beautiful', imagePrompt: '...', phonics: ['B','e','a','u','t','i','f','u','l'], sentence: 'The flower is beautiful.', emoji: '🦋' },
-      { word: 'Bed', imagePrompt: '...', phonics: ['B','e','d'], sentence: 'I sleep in my bed.', emoji: '🛏️' },
-      { word: 'Bedroom', imagePrompt: '...', phonics: ['B','e','d','r','o','o','m'], sentence: 'This is my bedroom.', emoji: '🛌' },
-      { word: 'Bicycle', imagePrompt: '...', phonics: ['B','i','c','y','c','l','e'], sentence: 'I can ride a bicycle.', emoji: '🚲' },
-      { word: 'Big', imagePrompt: '...', phonics: ['B','i','g'], sentence: 'The elephant is big.', emoji: '🐘' },
-      { word: 'Bike', imagePrompt: '...', phonics: ['B','i','k','e'], sentence: 'I have a new bike.', emoji: '🚴' },
-      { word: 'Bird', imagePrompt: '...', phonics: ['B','i','r','d'], sentence: 'A bird can fly.', emoji: '🐦' },
-      { word: 'Board', imagePrompt: '...', phonics: ['B','o','a','r','d'], sentence: 'The teacher writes on the board.', emoji: '👨‍🏫' },
-      { word: 'Boat', imagePrompt: '...', phonics: ['B','o','a','t'], sentence: 'The boat is on the sea.', emoji: '⛵' },
-      { word: 'Book', imagePrompt: '...', phonics: ['B','o','o','k'], sentence: 'I read a book.', emoji: '📖' },
-      { word: 'Bookcase', imagePrompt: '...', phonics: ['B','o','o','k','c','a','s','e'], sentence: 'The books are in the bookcase.', emoji: '📚' },
-      { word: 'Bread', imagePrompt: '...', phonics: ['B','r','e','a','d'], sentence: 'I eat bread for breakfast.', emoji: '🍞' },
-      { word: 'Brother', imagePrompt: '...', phonics: ['B','r','o','t','h','e','r'], sentence: 'He is my brother.', emoji: '👦' },
-      { word: 'Bus', imagePrompt: '...', phonics: ['B','u','s'], sentence: 'The school bus is yellow.', emoji: '🚌' },
+      { word: 'Baby', imagePrompt: '...', phonics: ['B','a','b','y'], sentence: 'The baby is sleeping.', emoji: '👶', translation: { word: 'Em bé', sentence: 'Em bé đang ngủ.' } },
+      { word: 'Bag', imagePrompt: '...', phonics: ['B','a','g'], sentence: 'This is my school bag.', emoji: '🎒', translation: { word: 'Cái cặp', sentence: 'Đây là cặp đi học của tôi.' } },
+      { word: 'Ball', imagePrompt: '...', phonics: ['B','a','l','l'], sentence: 'I play with a ball.', emoji: '⚽️', translation: { word: 'Quả bóng', sentence: 'Tôi chơi với một quả bóng.' } },
+      { word: 'Banana', imagePrompt: '...', phonics: ['B','a','n','a','n','a'], sentence: 'Monkeys like bananas.', emoji: '🍌', translation: { word: 'Quả chuối', sentence: 'Khỉ thích chuối.' } },
+      { word: 'Bed', imagePrompt: '...', phonics: ['B','e','d'], sentence: 'I sleep in my bed.', emoji: '🛏️', translation: { word: 'Cái giường', sentence: 'Tôi ngủ trên giường của mình.' } },
+      { word: 'Bike', imagePrompt: '...', phonics: ['B','i','k','e'], sentence: 'I have a new bike.', emoji: '🚴', translation: { word: 'Xe đạp', sentence: 'Tôi có một chiếc xe đạp mới.' } },
+      { word: 'Bird', imagePrompt: '...', phonics: ['B','i','r','d'], sentence: 'A bird can fly.', emoji: '🐦', translation: { word: 'Con chim', sentence: 'Một con chim có thể bay.' } },
+      { word: 'Book', imagePrompt: '...', phonics: ['B','o','o','k'], sentence: 'I read a book.', emoji: '📖', translation: { word: 'Quyển sách', sentence: 'Tôi đọc một quyển sách.' } },
+      { word: 'Bread', imagePrompt: '...', phonics: ['B','r','e','a','d'], sentence: 'I eat bread for breakfast.', emoji: '🍞', translation: { word: 'Bánh mì', sentence: 'Tôi ăn bánh mì cho bữa sáng.' } },
+      { word: 'Brother', imagePrompt: '...', phonics: ['B','r','o','t','h','e','r'], sentence: 'He is my brother.', emoji: '👦', translation: { word: 'Anh/em trai', sentence: 'Anh ấy là anh trai của tôi.' } },
+      { word: 'Bus', imagePrompt: '...', phonics: ['B','u','s'], sentence: 'The school bus is yellow.', emoji: '🚌', translation: { word: 'Xe buýt', sentence: 'Xe buýt của trường màu vàng.' } },
     ]
   },
   {
     letter: 'C',
     words: [
-      { word: 'Cake', imagePrompt: '...', phonics: ['C','a','k','e'], sentence: 'This is a birthday cake.', emoji: '🎂' },
-      { word: 'Camera', imagePrompt: '...', phonics: ['C','a','m','e','r','a'], sentence: 'I take a photo with a camera.', emoji: '📷' },
-      { word: 'Car', imagePrompt: '...', phonics: ['C','a','r'], sentence: 'This is a red car.', emoji: '🚗' },
-      { word: 'Cat', imagePrompt: '...', phonics: ['C','a','t'], sentence: 'The cat says meow.', emoji: '🐈' },
-      { word: 'Chair', imagePrompt: '...', phonics: ['C','h','a','i','r'], sentence: 'Sit on the chair.', emoji: '🪑' },
-      { word: 'Chalk', imagePrompt: '...', phonics: ['C','h','a','l','k'], sentence: 'I write with chalk.', emoji: '✍️' },
-      { word: 'Chicken', imagePrompt: '...', phonics: ['C','h','i','c','k','e','n'], sentence: 'The chicken lays eggs.', emoji: '🐔' },
-      { word: 'Chocolate', imagePrompt: '...', phonics: ['C','h','o','c','o','l','a','t','e'], sentence: 'Chocolate is sweet.', emoji: '🍫' },
-      { word: 'Clean', imagePrompt: '...', phonics: ['C','l','e','a','n'], sentence: 'My room is clean.', emoji: '🧼' },
-      { word: 'Clock', imagePrompt: '...', phonics: ['C','l','o','c','k'], sentence: 'The clock shows the time.', emoji: '⏰' },
-      { word: 'Computer', imagePrompt: '...', phonics: ['C','o','m','p','u','t','e','r'], sentence: 'I use a computer.', emoji: '💻' },
-      { word: 'Cookie', imagePrompt: '...', phonics: ['C','o','o','k','i','e'], sentence: 'I like chocolate chip cookies.', emoji: '🍪' },
-      { word: 'Cousin', imagePrompt: '...', phonics: ['C','o','u','s','i','n'], sentence: 'My cousin is my friend.', emoji: '🧑‍🤝‍🧑' },
-      { word: 'Crocodile', imagePrompt: '...', phonics: ['C','r','o','c','o','d','i','l','e'], sentence: 'A crocodile is long.', emoji: '🐊' },
-      { word: 'Cupboard', imagePrompt: '...', phonics: ['C','u','p','b','o','a','r','d'], sentence: 'The cups are in the cupboard.', emoji: '🍽️' },
+      { word: 'Cake', imagePrompt: '...', phonics: ['C','a','k','e'], sentence: 'This is a birthday cake.', emoji: '🎂', translation: { word: 'Bánh kem', sentence: 'Đây là một cái bánh sinh nhật.' } },
+      { word: 'Car', imagePrompt: '...', phonics: ['C','a','r'], sentence: 'This is a red car.', emoji: '🚗', translation: { word: 'Xe hơi', sentence: 'Đây là một chiếc xe hơi màu đỏ.' } },
+      { word: 'Cat', imagePrompt: '...', phonics: ['C','a','t'], sentence: 'The cat says meow.', emoji: '🐈', translation: { word: 'Con mèo', sentence: 'Con mèo kêu meo meo.' } },
+      { word: 'Chair', imagePrompt: '...', phonics: ['C','h','a','i','r'], sentence: 'Sit on the chair.', emoji: '🪑', translation: { word: 'Cái ghế', sentence: 'Hãy ngồi lên ghế.' } },
+      { word: 'Chicken', imagePrompt: '...', phonics: ['C','h','i','c','k','e','n'], sentence: 'The chicken lays eggs.', emoji: '🐔', translation: { word: 'Con gà', sentence: 'Con gà đẻ trứng.' } },
+      { word: 'Clock', imagePrompt: '...', phonics: ['C','l','o','c','k'], sentence: 'The clock shows the time.', emoji: '⏰', translation: { word: 'Đồng hồ', sentence: 'Đồng hồ chỉ thời gian.' } },
+      { word: 'Cookie', imagePrompt: '...', phonics: ['C','o','o','k','i','e'], sentence: 'I like chocolate chip cookies.', emoji: '🍪', translation: { word: 'Bánh quy', sentence: 'Tôi thích bánh quy sô cô la.' } },
+      { word: 'Crocodile', imagePrompt: '...', phonics: ['C','r','o','c','o','d','i','l','e'], sentence: 'A crocodile is long.', emoji: '🐊', translation: { word: 'Con cá sấu', sentence: 'Một con cá sấu thì dài.' } },
     ]
   },
   {
     letter: 'D',
     words: [
-      { word: 'Dance', imagePrompt: '...', phonics: ['D','a','n','c','e'], sentence: 'I like to dance.', emoji: '💃' },
-      { word: 'Desk', imagePrompt: '...', phonics: ['D','e','s','k'], sentence: 'I do homework at my desk.', emoji: '✍️' },
-      { word: 'Diningroom', imagePrompt: '...', phonics: ['D','i','n','i','n','g','r','o','o','m'], sentence: 'We eat in the dining room.', emoji: '🍽️' },
-      { word: 'Dirty', imagePrompt: '...', phonics: ['D','i','r','t','y'], sentence: 'My hands are dirty.', emoji: '✋' },
-      { word: 'Dog', imagePrompt: '...', phonics: ['D','o','g'], sentence: 'The dog barks.', emoji: '🐕' },
-      { word: 'Doll', imagePrompt: '...', phonics: ['D','o','l','l'], sentence: 'She plays with a doll.', emoji: '🎎' },
-      { word: 'Dolphin', imagePrompt: '...', phonics: ['D','o','l','p','h','i','n'], sentence: 'A dolphin can swim.', emoji: '🐬' },
-      { word: 'Dress', imagePrompt: '...', phonics: ['D','r','e','s','s'], sentence: 'She wears a pink dress.', emoji: '👗' },
-      { word: 'Drive', imagePrompt: '...', phonics: ['D','r','i','v','e'], sentence: 'My father can drive a car.', emoji: '🚗' },
-      { word: 'Duck', imagePrompt: '...', phonics: ['D','u','c','k'], sentence: 'The duck is in the pond.', emoji: '🦆' },
+      { word: 'Dance', imagePrompt: '...', phonics: ['D','a','n','c','e'], sentence: 'I like to dance.', emoji: '💃', translation: { word: 'Nhảy múa', sentence: 'Tôi thích nhảy múa.' } },
+      { word: 'Desk', imagePrompt: '...', phonics: ['D','e','s','k'], sentence: 'I do homework at my desk.', emoji: '✍️', translation: { word: 'Bàn học', sentence: 'Tôi làm bài tập về nhà tại bàn học.' } },
+      { word: 'Dog', imagePrompt: '...', phonics: ['D','o','g'], sentence: 'The dog barks.', emoji: '🐕', translation: { word: 'Con chó', sentence: 'Con chó sủa.' } },
+      { word: 'Doll', imagePrompt: '...', phonics: ['D','o','l','l'], sentence: 'She plays with a doll.', emoji: '🎎', translation: { word: 'Búp bê', sentence: 'Cô ấy chơi với một con búp bê.' } },
+      { word: 'Dolphin', imagePrompt: '...', phonics: ['D','o','l','p','h','i','n'], sentence: 'A dolphin can swim.', emoji: '🐬', translation: { word: 'Cá heo', sentence: 'Một con cá heo có thể bơi.' } },
+      { word: 'Duck', imagePrompt: '...', phonics: ['D','u','c','k'], sentence: 'The duck is in the pond.', emoji: '🦆', translation: { word: 'Con vịt', sentence: 'Con vịt ở trong ao.' } },
     ]
   },
   {
     letter: 'E',
     words: [
-      { word: 'Ear', imagePrompt: '...', phonics: ['E','a','r'], sentence: 'I can hear with my ears.', emoji: '👂' },
-      { word: 'Elephant', imagePrompt: '...', phonics: ['E','l','e','p','h','a','n','t'], sentence: 'An elephant has a long trunk.', emoji: '🐘' },
-      { word: 'Eraser', imagePrompt: '...', phonics: ['E','r','a','s','e','r'], sentence: 'I use an eraser.', emoji: '📝' },
-      { word: 'Eye', imagePrompt: '...', phonics: ['E','y','e'], sentence: 'I can see with my eyes.', emoji: '👁️' },
+      { word: 'Ear', imagePrompt: '...', phonics: ['E','a','r'], sentence: 'I can hear with my ears.', emoji: '👂', translation: { word: 'Cái tai', sentence: 'Tôi có thể nghe bằng tai.' } },
+      { word: 'Elephant', imagePrompt: '...', phonics: ['E','l','e','p','h','a','n','t'], sentence: 'An elephant has a long trunk.', emoji: '🐘', translation: { word: 'Con voi', sentence: 'Một con voi có một cái vòi dài.' } },
+      { word: 'Eraser', imagePrompt: '...', phonics: ['E','r','a','s','e','r'], sentence: 'I use an eraser.', emoji: '📝', translation: { word: 'Cục tẩy', sentence: 'Tôi dùng một cục tẩy.' } },
+      { word: 'Eye', imagePrompt: '...', phonics: ['E','y','e'], sentence: 'I can see with my eyes.', emoji: '👁️', translation: { word: 'Con mắt', sentence: 'Tôi có thể nhìn bằng mắt.' } },
     ]
   },
   {
     letter: 'F',
     words: [
-      { word: 'Face', imagePrompt: '...', phonics: ['F','a','c','e'], sentence: 'I wash my face.', emoji: '😊' },
-      { word: 'Father', imagePrompt: '...', phonics: ['F','a','t','h','e','r'], sentence: 'My father is tall.', emoji: '👨' },
-      { word: 'Fat', imagePrompt: '...', phonics: ['F','a','t'], sentence: 'The cat is fat.', emoji: '🐈' },
-      { word: 'Feet', imagePrompt: '...', phonics: ['F','e','e','t'], sentence: 'I have two feet.', emoji: '👣' },
-      { word: 'Fish', imagePrompt: '...', phonics: ['F','i','s','h'], sentence: 'The fish lives in water.', emoji: '🐠' },
-      { word: 'Flower', imagePrompt: '...', phonics: ['F','l','o','w','e','r'], sentence: 'The flower smells good.', emoji: '🌸' },
-      { word: 'Fly', imagePrompt: '...', phonics: ['F','l','y'], sentence: 'A bird can fly.', emoji: '🕊️' },
-      { word: 'Football', imagePrompt: '...', phonics: ['F','o','o','t','b','a','l','l'], sentence: 'They play football.', emoji: '🏈' },
-      { word: 'Foot', imagePrompt: '...', phonics: ['F','o','o','t'], sentence: 'This is my left foot.', emoji: '🦶' },
+      { word: 'Face', imagePrompt: '...', phonics: ['F','a','c','e'], sentence: 'I wash my face.', emoji: '😊', translation: { word: 'Khuôn mặt', sentence: 'Tôi rửa mặt.' } },
+      { word: 'Father', imagePrompt: '...', phonics: ['F','a','t','h','e','r'], sentence: 'My father is tall.', emoji: '👨', translation: { word: 'Bố', sentence: 'Bố tôi cao.' } },
+      { word: 'Fish', imagePrompt: '...', phonics: ['F','i','s','h'], sentence: 'The fish lives in water.', emoji: '🐠', translation: { word: 'Con cá', sentence: 'Cá sống dưới nước.' } },
+      { word: 'Flower', imagePrompt: '...', phonics: ['F','l','o','w','e','r'], sentence: 'The flower smells good.', emoji: '🌸', translation: { word: 'Bông hoa', sentence: 'Bông hoa có mùi thơm.' } },
+      { word: 'Foot', imagePrompt: '...', phonics: ['F','o','o','t'], sentence: 'This is my left foot.', emoji: '🦶', translation: { word: 'Bàn chân', sentence: 'Đây là bàn chân trái của tôi.' } },
     ]
   },
   {
     letter: 'G',
     words: [
-      { word: 'Giraffe', imagePrompt: '...', phonics: ['G','i','r','a','f','f','e'], sentence: 'A giraffe has a long neck.', emoji: '🦒' },
-      { word: 'Grandfather', imagePrompt: '...', phonics: ['G','r','a','n','d','f','a','t','h','e','r'], sentence: 'My grandfather is old.', emoji: '👴' },
-      { word: 'Grandmother', imagePrompt: '...', phonics: ['G','r','a','n','d','m','o','t','h','e','r'], sentence: 'My grandmother is kind.', emoji: '👵' },
-      { word: 'Grape', imagePrompt: '...', phonics: ['G','r','a','p','e'], sentence: 'Grapes are yummy.', emoji: '🍇' },
-      { word: 'Guitar', imagePrompt: '...', phonics: ['G','u','i','t','a','r'], sentence: 'He can play the guitar.', emoji: '🎸' },
+      { word: 'Giraffe', imagePrompt: '...', phonics: ['G','i','r','a','f','f','e'], sentence: 'A giraffe has a long neck.', emoji: '🦒', translation: { word: 'Hươu cao cổ', sentence: 'Một con hươu cao cổ có một cái cổ dài.' } },
+      { word: 'Grandfather', imagePrompt: '...', phonics: ['G','r','a','n','d','f','a','t','h','e','r'], sentence: 'My grandfather is old.', emoji: '👴', translation: { word: 'Ông', sentence: 'Ông tôi đã già.' } },
+      { word: 'Grandmother', imagePrompt: '...', phonics: ['G','r','a','n','d','m','o','t','h','e','r'], sentence: 'My grandmother is kind.', emoji: '👵', translation: { word: 'Bà', sentence: 'Bà tôi tốt bụng.' } },
+      { word: 'Grape', imagePrompt: '...', phonics: ['G','r','a','p','e'], sentence: 'Grapes are yummy.', emoji: '🍇', translation: { word: 'Quả nho', sentence: 'Nho rất ngon.' } },
+      { word: 'Guitar', imagePrompt: '...', phonics: ['G','u','i','t','a','r'], sentence: 'He can play the guitar.', emoji: '🎸', translation: { word: 'Đàn ghi-ta', sentence: 'Anh ấy có thể chơi ghi-ta.' } },
     ]
   },
   {
     letter: 'H',
     words: [
-      { word: 'Hair', imagePrompt: '...', phonics: ['H','a','i','r'], sentence: 'She has long hair.', emoji: '👱‍♀️' },
-      { word: 'Hamburger', imagePrompt: '...', phonics: ['H','a','m','b','u','r','g','e','r'], sentence: 'I like to eat hamburgers.', emoji: '🍔' },
-      { word: 'Hand', imagePrompt: '...', phonics: ['H','a','n','d'], sentence: 'I write with my hand.', emoji: '✋' },
-      { word: 'Happy', imagePrompt: '...', phonics: ['H','a','p','p','y'], sentence: 'I am happy today.', emoji: '😄' },
-      { word: 'Hat', imagePrompt: '...', phonics: ['H','a','t'], sentence: 'This is my new hat.', emoji: '👒' },
-      { word: 'Head', imagePrompt: '...', phonics: ['H','e','a','d'], sentence: 'I wear a hat on my head.', emoji: '🤕' },
-      { word: 'Helicopter', imagePrompt: '...', phonics: ['H','e','l','i','c','o','p','t','e','r'], sentence: 'The helicopter is in the sky.', emoji: '🚁' },
-      { word: 'Hippo', imagePrompt: '...', phonics: ['H','i','p','p','o'], sentence: 'A hippo is big.', emoji: '🦛' },
-      { word: 'Horse', imagePrompt: '...', phonics: ['H','o','r','s','e'], sentence: 'I can ride a horse.', emoji: '🐎' },
+      { word: 'Hair', imagePrompt: '...', phonics: ['H','a','i','r'], sentence: 'She has long hair.', emoji: '👱‍♀️', translation: { word: 'Tóc', sentence: 'Cô ấy có mái tóc dài.' } },
+      { word: 'Hamburger', imagePrompt: '...', phonics: ['H','a','m','b','u','r','g','e','r'], sentence: 'I like to eat hamburgers.', emoji: '🍔', translation: { word: 'Bánh hăm-bơ-gơ', sentence: 'Tôi thích ăn hăm-bơ-gơ.' } },
+      { word: 'Hand', imagePrompt: '...', phonics: ['H','a','n','d'], sentence: 'I write with my hand.', emoji: '✋', translation: { word: 'Bàn tay', sentence: 'Tôi viết bằng tay.' } },
+      { word: 'Hat', imagePrompt: '...', phonics: ['H','a','t'], sentence: 'This is my new hat.', emoji: '👒', translation: { word: 'Cái mũ', sentence: 'Đây là cái mũ mới của tôi.' } },
+      { word: 'Horse', imagePrompt: '...', phonics: ['H','o','r','s','e'], sentence: 'I can ride a horse.', emoji: '🐎', translation: { word: 'Con ngựa', sentence: 'Tôi có thể cưỡi ngựa.' } },
     ]
   },
   {
     letter: 'I',
     words: [
-      { word: 'Ice-cream', imagePrompt: '...', phonics: ['I','c','e','-','c','r','e','a','m'], sentence: 'I love ice-cream.', emoji: '🍦' },
+      { word: 'Ice-cream', imagePrompt: '...', phonics: ['I','c','e','-','c','r','e','a','m'], sentence: 'I love ice-cream.', emoji: '🍦', translation: { word: 'Kem', sentence: 'Tôi yêu kem.' } },
+      { word: 'Ink', imagePrompt: '...', phonics: ['I','n','k'], sentence: 'The pen is out of ink.', emoji: '✒️', translation: { word: 'Mực', sentence: 'Cây bút hết mực.' } },
+      { word: 'Igloo', imagePrompt: '...', phonics: ['I','g','l','o','o'], sentence: 'An igloo is made of snow.', emoji: '🛖', translation: { word: 'Lều tuyết', sentence: 'Lều tuyết được làm bằng tuyết.' } },
+      { word: 'Island', imagePrompt: '...', phonics: ['I','s','l','a','n','d'], sentence: 'We live on an island.', emoji: '🏝️', translation: { word: 'Hòn đảo', sentence: 'Chúng tôi sống trên một hòn đảo.' } },
+      { word: 'Insect', imagePrompt: '...', phonics: ['I','n','s','e','c','t'], sentence: 'An ant is an insect.', emoji: '🐜', translation: { word: 'Côn trùng', sentence: 'Kiến là một loài côn trùng.' } },
+      { word: 'Iron', imagePrompt: '...', phonics: ['I','r','o','n'], sentence: 'I iron my shirt.', emoji: '👔', translation: { word: 'Bàn là', sentence: 'Tôi là áo sơ mi của mình.' } },
     ]
   },
   {
     letter: 'J',
     words: [
-      { word: 'Jacket', imagePrompt: '...', phonics: ['J','a','c','k','e','t'], sentence: 'I wear a jacket when it is cold.', emoji: '🧥' },
+      { word: 'Jacket', imagePrompt: '...', phonics: ['J','a','c','k','e','t'], sentence: 'I wear a jacket when it is cold.', emoji: '🧥', translation: { word: 'Áo khoác', sentence: 'Tôi mặc áo khoác khi trời lạnh.' } },
+      { word: 'Jam', imagePrompt: '...', phonics: ['J','a','m'], sentence: 'I like strawberry jam.', emoji: '🍓', translation: { word: 'Mứt', sentence: 'Tôi thích mứt dâu.' } },
+      { word: 'Jeans', imagePrompt: '...', phonics: ['J','e','a','n','s'], sentence: 'She wears blue jeans.', emoji: '👖', translation: { word: 'Quần jean', sentence: 'Cô ấy mặc quần jean xanh.' } },
+      { word: 'Jellyfish', imagePrompt: '...', phonics: ['J','e','l','l','y','f','i','s','h'], sentence: 'A jellyfish lives in the sea.', emoji: '🐙', translation: { word: 'Con sứa', sentence: 'Sứa sống ở biển.' } },
+      { word: 'Juice', imagePrompt: '...', phonics: ['J','u','i','c','e'], sentence: 'I drink orange juice.', emoji: '🍊', translation: { word: 'Nước ép', sentence: 'Tôi uống nước ép cam.' } },
+      { word: 'Jump', imagePrompt: '...', phonics: ['J','u','m','p'], sentence: 'I can jump high.', emoji: '🤸', translation: { word: 'Nhảy', sentence: 'Tôi có thể nhảy cao.' } },
     ]
   },
   {
     letter: 'K',
     words: [
-      { word: 'Kitchen', imagePrompt: '...', phonics: ['K','i','t','c','h','e','n'], sentence: 'My mother is in the kitchen.', emoji: '🍳' },
-      { word: 'Kite', imagePrompt: '...', phonics: ['K','i','t','e'], sentence: 'I fly a kite.', emoji: '🪁' },
+      { word: 'Kitchen', imagePrompt: '...', phonics: ['K','i','t','c','h','e','n'], sentence: 'My mother is in the kitchen.', emoji: '🍳', translation: { word: 'Nhà bếp', sentence: 'Mẹ tôi đang ở trong bếp.' } },
+      { word: 'Kite', imagePrompt: '...', phonics: ['K','i','t','e'], sentence: 'I fly a kite.', emoji: '🪁', translation: { word: 'Cái diều', sentence: 'Tôi thả diều.' } },
+      { word: 'Kangaroo', imagePrompt: '...', phonics: ['K','a','n','g','a','r','o','o'], sentence: 'A kangaroo can jump.', emoji: '🦘', translation: { word: 'Chuột túi', sentence: 'Chuột túi có thể nhảy.' } },
+      { word: 'Key', imagePrompt: '...', phonics: ['K','e','y'], sentence: 'This is the key to the door.', emoji: '🔑', translation: { word: 'Chìa khóa', sentence: 'Đây là chìa khóa cửa.' } },
+      { word: 'King', imagePrompt: '...', phonics: ['K','i','n','g'], sentence: 'The king lives in a castle.', emoji: '👑', translation: { word: 'Nhà vua', sentence: 'Nhà vua sống trong một lâu đài.' } },
+      { word: 'Kick', imagePrompt: '...', phonics: ['K','i','c','k'], sentence: 'I can kick a ball.', emoji: '⚽', translation: { word: 'Đá', sentence: 'Tôi có thể đá một quả bóng.' } },
     ]
   },
   {
     letter: 'L',
     words: [
-      { word: 'Lamp', imagePrompt: '...', phonics: ['L','a','m','p'], sentence: 'The lamp is on the table.', emoji: '💡' },
-      { word: 'Leg', imagePrompt: '...', phonics: ['L','e','g'], sentence: 'I can kick with my leg.', emoji: '🦵' },
-      { word: 'Lion', imagePrompt: '...', phonics: ['L','i','o','n'], sentence: 'The lion is king of the jungle.', emoji: '🦁' },
-      { word: 'Listen', imagePrompt: '...', phonics: ['L','i','s','t','e','n'], sentence: 'I listen to music.', emoji: '🎧' },
-      { word: 'Livingroom', imagePrompt: '...', phonics: ['L','i','v','i','n','g','r','o','o','m'], sentence: 'We watch TV in the living room.', emoji: '🛋️' },
-      { word: 'Long', imagePrompt: '...', phonics: ['L','o','n','g'], sentence: 'A ruler is long.', emoji: '📏' },
-      { word: 'Lorry', imagePrompt: '...', phonics: ['L','o','r','r','y'], sentence: 'The lorry is very big.', emoji: '🚚' },
+      { word: 'Lamp', imagePrompt: '...', phonics: ['L','a','m','p'], sentence: 'The lamp is on the table.', emoji: '💡', translation: { word: 'Cái đèn', sentence: 'Cái đèn ở trên bàn.' } },
+      { word: 'Leg', imagePrompt: '...', phonics: ['L','e','g'], sentence: 'I can kick with my leg.', emoji: '🦵', translation: { word: 'Cái chân', sentence: 'Tôi có thể đá bằng chân.' } },
+      { word: 'Lion', imagePrompt: '...', phonics: ['L','i','o','n'], sentence: 'The lion is king of the jungle.', emoji: '🦁', translation: { word: 'Sư tử', sentence: 'Sư tử là vua của rừng xanh.' } },
+      { word: 'Listen', imagePrompt: '...', phonics: ['L','i','s','t','e','n'], sentence: 'I listen to music.', emoji: '🎧', translation: { word: 'Nghe', sentence: 'Tôi nghe nhạc.' } },
+      { word: 'Lorry', imagePrompt: '...', phonics: ['L','o','r','r','y'], sentence: 'The lorry is very big.', emoji: '🚚', translation: { word: 'Xe tải', sentence: 'Chiếc xe tải rất to.' } },
     ]
   },
   {
     letter: 'M',
     words: [
-      { word: 'Match', imagePrompt: '...', phonics: ['M','a','t','c','h'], sentence: 'We won the match.', emoji: '🏆' },
-      { word: 'Mat', imagePrompt: '...', phonics: ['M','a','t'], sentence: 'The cat is on the mat.', emoji: '🧘' },
-      { word: 'Mirror', imagePrompt: '...', phonics: ['M','i','r','r','o','r'], sentence: 'I see myself in the mirror.', emoji: '🪞' },
-      { word: 'Monkey', imagePrompt: '...', phonics: ['M','o','n','k','e','y'], sentence: 'A monkey likes bananas.', emoji: '🐒' },
-      { word: 'Motorbike', imagePrompt: '...', phonics: ['M','o','t','o','r','b','i','k','e'], sentence: 'He rides a motorbike.', emoji: '🏍️' },
-      { word: 'Mother', imagePrompt: '...', phonics: ['M','o','t','h','e','r'], sentence: 'My mother is beautiful.', emoji: '👩' },
-      { word: 'Mouth', imagePrompt: '...', phonics: ['M','o','u','t','h'], sentence: 'I eat with my mouth.', emoji: '👄' },
-      { word: 'Mouse', imagePrompt: '...', phonics: ['M','o','u','s','e'], sentence: 'The mouse is small.', emoji: '🐁' },
+      { word: 'Mirror', imagePrompt: '...', phonics: ['M','i','r','r','o','r'], sentence: 'I see myself in the mirror.', emoji: '🪞', translation: { word: 'Cái gương', sentence: 'Tôi nhìn thấy mình trong gương.' } },
+      { word: 'Monkey', imagePrompt: '...', phonics: ['M','o','n','k','e','y'], sentence: 'A monkey likes bananas.', emoji: '🐒', translation: { word: 'Con khỉ', sentence: 'Một con khỉ thích chuối.' } },
+      { word: 'Mother', imagePrompt: '...', phonics: ['M','o','t','h','e','r'], sentence: 'My mother is beautiful.', emoji: '👩', translation: { word: 'Mẹ', sentence: 'Mẹ tôi rất đẹp.' } },
+      { word: 'Mouth', imagePrompt: '...', phonics: ['M','o','u','t','h'], sentence: 'I eat with my mouth.', emoji: '👄', translation: { word: 'Cái miệng', sentence: 'Tôi ăn bằng miệng.' } },
+      { word: 'Mouse', imagePrompt: '...', phonics: ['M','o','u','s','e'], sentence: 'The mouse is small.', emoji: '🐁', translation: { word: 'Con chuột', sentence: 'Con chuột thì nhỏ.' } },
     ]
   },
   {
     letter: 'N',
     words: [
-      { word: 'Neck', imagePrompt: '...', phonics: ['N','e','c','k'], sentence: 'A giraffe has a long neck.', emoji: '🦒' },
-      { word: 'Notebook', imagePrompt: '...', phonics: ['N','o','t','e','b','o','o','k'], sentence: 'I write in my notebook.', emoji: '📓' },
-      { word: 'Nose', imagePrompt: '...', phonics: ['N','o','s','e'], sentence: 'I can smell with my nose.', emoji: '👃' },
+      { word: 'Neck', imagePrompt: '...', phonics: ['N','e','c','k'], sentence: 'A giraffe has a long neck.', emoji: '🦒', translation: { word: 'Cái cổ', sentence: 'Hươu cao cổ có một cái cổ dài.' } },
+      { word: 'Notebook', imagePrompt: '...', phonics: ['N','o','t','e','b','o','o','k'], sentence: 'I write in my notebook.', emoji: '📓', translation: { word: 'Quyển vở', sentence: 'Tôi viết vào vở.' } },
+      { word: 'Nose', imagePrompt: '...', phonics: ['N','o','s','e'], sentence: 'I can smell with my nose.', emoji: '👃', translation: { word: 'Cái mũi', sentence: 'Tôi có thể ngửi bằng mũi.' } },
+      { word: 'Nurse', imagePrompt: '...', phonics: ['N','u','r','s','e'], sentence: 'The nurse helps sick people.', emoji: '👩‍⚕️', translation: { word: 'Y tá', sentence: 'Y tá giúp đỡ người bệnh.' } },
+      { word: 'Net', imagePrompt: '...', phonics: ['N','e','t'], sentence: 'We play volleyball with a net.', emoji: '🏐', translation: { word: 'Cái lưới', sentence: 'Chúng tôi chơi bóng chuyền với một cái lưới.' } },
     ]
   },
   {
     letter: 'O',
     words: [
-      { word: 'Old', imagePrompt: '...', phonics: ['O','l','d'], sentence: 'My grandfather is old.', emoji: '👴' },
-      { word: 'Orange', imagePrompt: '...', phonics: ['O','r','a','n','g','e'], sentence: 'An orange is a fruit.', emoji: '🍊' },
+      { word: 'Old', imagePrompt: '...', phonics: ['O','l','d'], sentence: 'My grandfather is old.', emoji: '👴', translation: { word: 'Già', sentence: 'Ông tôi đã già.' } },
+      { word: 'Orange', imagePrompt: '...', phonics: ['O','r','a','n','g','e'], sentence: 'An orange is a fruit.', emoji: '🍊', translation: { word: 'Quả cam', sentence: 'Cam là một loại trái cây.' } },
+      { word: 'Octopus', imagePrompt: '...', phonics: ['O','c','t','o','p','u','s'], sentence: 'An octopus has eight arms.', emoji: '🐙', translation: { word: 'Bạch tuộc', sentence: 'Bạch tuộc có tám tay.' } },
+      { word: 'Ostrich', imagePrompt: '...', phonics: ['O','s','t','r','i','c','h'], sentence: 'An ostrich is a big bird.', emoji: '🐦', translation: { word: 'Đà điểu', sentence: 'Đà điểu là một loài chim lớn.' } },
+      { word: 'Onion', imagePrompt: '...', phonics: ['O','n','i','o','n'], sentence: 'An onion makes me cry.', emoji: '🧅', translation: { word: 'Hành tây', sentence: 'Hành tây làm tôi cay mắt.' } },
     ]
   },
   {
     letter: 'P',
     words: [
-      { word: 'Pen', imagePrompt: '...', phonics: ['P','e','n'], sentence: 'I write with a pen.', emoji: '🖊️' },
-      { word: 'Pencil', imagePrompt: '...', phonics: ['P','e','n','c','i','l'], sentence: 'This is a yellow pencil.', emoji: '✏️' },
-      { word: 'Phone', imagePrompt: '...', phonics: ['P','h','o','n','e'], sentence: 'I have a new phone.', emoji: '📱' },
-      { word: 'Piano', imagePrompt: '...', phonics: ['P','i','a','n','o'], sentence: 'I can play the piano.', emoji: '🎹' },
-      { word: 'Picture', imagePrompt: '...', phonics: ['P','i','c','t','u','r','e'], sentence: 'This is a nice picture.', emoji: '🖼️' },
-      { word: 'Pineapple', imagePrompt: '...', phonics: ['P','i','n','e','a','p','p','l','e'], sentence: 'Pineapple is sweet.', emoji: '🍍' },
-      { word: 'Plane', imagePrompt: '...', phonics: ['P','l','a','n','e'], sentence: 'The plane is flying.', emoji: '✈️' },
-      { word: 'Point', imagePrompt: '...', phonics: ['P','o','i','n','t'], sentence: 'Point to the door.', emoji: '👉' },
-      { word: 'Potato', imagePrompt: '...', phonics: ['P','o','t','a','t','o'], sentence: 'A potato grows underground.', emoji: '🥔' },
-      { word: 'Pupil', imagePrompt: '...', phonics: ['P','u','p','i','l'], sentence: 'I am a pupil.', emoji: '🧑‍🎓' },
+      { word: 'Pen', imagePrompt: '...', phonics: ['P','e','n'], sentence: 'I write with a pen.', emoji: '🖊️', translation: { word: 'Bút mực', sentence: 'Tôi viết bằng bút mực.' } },
+      { word: 'Pencil', imagePrompt: '...', phonics: ['P','e','n','c','i','l'], sentence: 'This is a yellow pencil.', emoji: '✏️', translation: { word: 'Bút chì', sentence: 'Đây là một cây bút chì màu vàng.' } },
+      { word: 'Piano', imagePrompt: '...', phonics: ['P','i','a','n','o'], sentence: 'I can play the piano.', emoji: '🎹', translation: { word: 'Đàn piano', sentence: 'Tôi có thể chơi piano.' } },
+      { word: 'Picture', imagePrompt: '...', phonics: ['P','i','c','t','u','r','e'], sentence: 'This is a nice picture.', emoji: '🖼️', translation: { word: 'Bức tranh', sentence: 'Đây là một bức tranh đẹp.' } },
+      { word: 'Pineapple', imagePrompt: '...', phonics: ['P','i','n','e','a','p','p','l','e'], sentence: 'Pineapple is sweet.', emoji: '🍍', translation: { word: 'Quả dứa', sentence: 'Dứa thì ngọt.' } },
+      { word: 'Plane', imagePrompt: '...', phonics: ['P','l','a','n','e'], sentence: 'The plane is flying.', emoji: '✈️', translation: { word: 'Máy bay', sentence: 'Máy bay đang bay.' } },
     ]
   },
   {
     letter: 'Q',
     words: [
-      { word: 'Queen', imagePrompt: '...', phonics: ['Q','u','e','e','n'], sentence: 'The queen is kind.', emoji: '👑' },
+      { word: 'Queen', imagePrompt: '...', phonics: ['Q','u','e','e','n'], sentence: 'The queen is kind.', emoji: '👑', translation: { word: 'Nữ hoàng', sentence: 'Nữ hoàng rất tốt bụng.' } },
+      { word: 'Quiet', imagePrompt: '...', phonics: ['Q','u','i','e','t'], sentence: 'Please be quiet in the library.', emoji: '🤫', translation: { word: 'Yên tĩnh', sentence: 'Vui lòng giữ yên tĩnh trong thư viện.' } },
+      { word: 'Question', imagePrompt: '...', phonics: ['Q','u','e','s','t','i','o','n'], sentence: 'I have a question.', emoji: '❓', translation: { word: 'Câu hỏi', sentence: 'Tôi có một câu hỏi.' } },
+      { word: 'Quilt', imagePrompt: '...', phonics: ['Q','u','i','l','t'], sentence: 'The quilt is warm.', emoji: '🛌', translation: { word: 'Cái chăn', sentence: 'Cái chăn này ấm.' } },
+      { word: 'Quack', imagePrompt: '...', phonics: ['Q','u','a','c','k'], sentence: 'The duck says quack.', emoji: '🦆', translation: { word: 'Quạc quạc', sentence: 'Con vịt kêu quạc quạc.' } },
     ]
   },
   {
     letter: 'R',
     words: [
-      { word: 'Read', imagePrompt: '...', phonics: ['R','e','a','d'], sentence: 'I read a book.', emoji: '📖' },
-      { word: 'Ride', imagePrompt: '...', phonics: ['R','i','d','e'], sentence: 'I ride a bike.', emoji: '🚲' },
-      { word: 'Robot', imagePrompt: '...', phonics: ['R','o','b','o','t'], sentence: 'The robot can walk.', emoji: '🤖' },
-      { word: 'Room', imagePrompt: '...', phonics: ['R','o','o','m'], sentence: 'This is my room.', emoji: '🏠' },
-      { word: 'Ruler', imagePrompt: '...', phonics: ['R','u','l','e','r'], sentence: 'I use a ruler to draw a line.', emoji: '📏' },
+      { word: 'Read', imagePrompt: '...', phonics: ['R','e','a','d'], sentence: 'I read a book.', emoji: '📖', translation: { word: 'Đọc', sentence: 'Tôi đọc một quyển sách.' } },
+      { word: 'Ride', imagePrompt: '...', phonics: ['R','i','d','e'], sentence: 'I ride a bike.', emoji: '🚲', translation: { word: 'Lái/Cưỡi', sentence: 'Tôi lái xe đạp.' } },
+      { word: 'Robot', imagePrompt: '...', phonics: ['R','o','b','o','t'], sentence: 'The robot can walk.', emoji: '🤖', translation: { word: 'Người máy', sentence: 'Người máy có thể đi bộ.' } },
+      { word: 'Room', imagePrompt: '...', phonics: ['R','o','o','m'], sentence: 'This is my room.', emoji: '🏠', translation: { word: 'Căn phòng', sentence: 'Đây là phòng của tôi.' } },
+      { word: 'Ruler', imagePrompt: '...', phonics: ['R','u','l','e','r'], sentence: 'I use a ruler to draw a line.', emoji: '📏', translation: { word: 'Cây thước', sentence: 'Tôi dùng thước để kẻ một đường thẳng.' } },
     ]
   },
   {
     letter: 'S',
     words: [
-      { word: 'Sad', imagePrompt: '...', phonics: ['S','a','d'], sentence: 'I feel sad.', emoji: '😢' },
-      { word: 'Say', imagePrompt: '...', phonics: ['S','a','y'], sentence: 'Can you say your name?', emoji: '🗣️' },
-      { word: 'Shirt', imagePrompt: '...', phonics: ['S','h','i','r','t'], sentence: 'My shirt is blue.', emoji: '👕' },
-      { word: 'Shoes', imagePrompt: '...', phonics: ['S','h','o','e','s'], sentence: 'I wear new shoes.', emoji: '👟' },
-      { word: 'Short', imagePrompt: '...', phonics: ['S','h','o','r','t'], sentence: 'This pencil is short.', emoji: '✏️' },
-      { word: 'Shorts', imagePrompt: '...', phonics: ['S','h','o','r','t','s'], sentence: 'I wear shorts in summer.', emoji: '🩳' },
-      { word: 'Shoulder', imagePrompt: '...', phonics: ['S','h','o','u','l','d','e','r'], sentence: 'I have two shoulders.', emoji: '🤷' },
-      { word: 'Sing', imagePrompt: '...', phonics: ['S','i','n','g'], sentence: 'I can sing a song.', emoji: '🎤' },
-      { word: 'Sister', imagePrompt: '...', phonics: ['S','i','s','t','e','r'], sentence: 'She is my sister.', emoji: '👧' },
-      { word: 'Sit', imagePrompt: '...', phonics: ['S','i','t'], sentence: 'Please sit down.', emoji: '🪑' },
-      { word: 'Skirt', imagePrompt: '...', phonics: ['S','k','i','r','t'], sentence: 'She is wearing a skirt.', emoji: '👗' },
-      { word: 'Small', imagePrompt: '...', phonics: ['S','m','a','l','l'], sentence: 'An ant is small.', emoji: '🐜' },
-      { word: 'Snake', imagePrompt: '...', phonics: ['S','n','a','k','e'], sentence: 'The snake is long.', emoji: '🐍' },
-      { word: 'Socks', imagePrompt: '...', phonics: ['S','o','c','k','s'], sentence: 'My socks are white.', emoji: '🧦' },
-      { word: 'Sofa', imagePrompt: '...', phonics: ['S','o','f','a'], sentence: 'I sit on the sofa.', emoji: '🛋️' },
-      { word: 'Stand', imagePrompt: '...', phonics: ['S','t','a','n','d'], sentence: 'Please stand up.', emoji: '🧍' },
-      { word: 'Strawberry', imagePrompt: '...', phonics: ['S','t','r','a','w','b','e','r','r','y'], sentence: 'Strawberry is red.', emoji: '🍓' },
-      { word: 'Sweater', imagePrompt: '...', phonics: ['S','w','e','a','t','e','r'], sentence: 'I wear a sweater in winter.', emoji: '🧥' },
-      { word: 'Swim', imagePrompt: '...', phonics: ['S','w','i','m'], sentence: 'I can swim in the pool.', emoji: '🏊' },
+      { word: 'Shirt', imagePrompt: '...', phonics: ['S','h','i','r','t'], sentence: 'My shirt is blue.', emoji: '👕', translation: { word: 'Áo sơ mi', sentence: 'Áo sơ mi của tôi màu xanh.' } },
+      { word: 'Shoes', imagePrompt: '...', phonics: ['S','h','o','e','s'], sentence: 'I wear new shoes.', emoji: '👟', translation: { word: 'Đôi giày', sentence: 'Tôi mang giày mới.' } },
+      { word: 'Sing', imagePrompt: '...', phonics: ['S','i','n','g'], sentence: 'I can sing a song.', emoji: '🎤', translation: { word: 'Hát', sentence: 'Tôi có thể hát một bài hát.' } },
+      { word: 'Sister', imagePrompt: '...', phonics: ['S','i','s','t','e','r'], sentence: 'She is my sister.', emoji: '👧', translation: { word: 'Chị/em gái', sentence: 'Cô ấy là em gái tôi.' } },
+      { word: 'Snake', imagePrompt: '...', phonics: ['S','n','a','k','e'], sentence: 'The snake is long.', emoji: '🐍', translation: { word: 'Con rắn', sentence: 'Con rắn thì dài.' } },
+      { word: 'Sofa', imagePrompt: '...', phonics: ['S','o','f','a'], sentence: 'I sit on the sofa.', emoji: '🛋️', translation: { word: 'Ghế sofa', sentence: 'Tôi ngồi trên ghế sofa.' } },
+      { word: 'Strawberry', imagePrompt: '...', phonics: ['S','t','r','a','w','b','e','r','r','y'], sentence: 'Strawberry is red.', emoji: '🍓', translation: { word: 'Dâu tây', sentence: 'Dâu tây màu đỏ.' } },
+      { word: 'Swim', imagePrompt: '...', phonics: ['S','w','i','m'], sentence: 'I can swim in the pool.', emoji: '🏊', translation: { word: 'Bơi', sentence: 'Tôi có thể bơi trong hồ bơi.' } },
     ]
   },
   {
     letter: 'T',
     words: [
-      { word: 'Table', imagePrompt: '...', phonics: ['T','a','b','l','e'], sentence: 'The book is on the table.', emoji: '📚' },
-      { word: 'Tail', imagePrompt: '...', phonics: ['T','a','i','l'], sentence: 'A dog has a tail.', emoji: '🐕' },
-      { word: 'Talk', imagePrompt: '...', phonics: ['T','a','l','k'], sentence: 'We can talk together.', emoji: '🗣️' },
-      { word: 'Teacher', imagePrompt: '...', phonics: ['T','e','a','c','h','e','r'], sentence: 'My teacher is nice.', emoji: '👩‍🏫' },
-      { word: 'Teeth', imagePrompt: '...', phonics: ['T','e','e','t','h'], sentence: 'I brush my teeth.', emoji: '🦷' },
-      { word: 'Tennis', imagePrompt: '...', phonics: ['T','e','n','n','i','s'], sentence: 'Let us play tennis.', emoji: '🎾' },
-      { word: 'Thin', imagePrompt: '...', phonics: ['T','h','i','n'], sentence: 'The book is thin.', emoji: '📖' },
-      { word: 'Tiger', imagePrompt: '...', phonics: ['T','i','g','e','r'], sentence: 'A tiger is a big cat.', emoji: '🐅' },
-      { word: 'T-shirt', imagePrompt: '...', phonics: ['T','-','s','h','i','r','t'], sentence: 'I have a white T-shirt.', emoji: '👕' },
-      { word: 'Tomato', imagePrompt: '...', phonics: ['T','o','m','a','t','o'], sentence: 'A tomato is red.', emoji: '🍅' },
-      { word: 'Tooth', imagePrompt: '...', phonics: ['T','o','o','t','h'], sentence: 'I lost a tooth.', emoji: '🦷' },
-      { word: 'Train', imagePrompt: '...', phonics: ['T','r','a','i','n'], sentence: 'The train is fast.', emoji: '🚂' },
-      { word: 'Trousers', imagePrompt: '...', phonics: ['T','r','o','u','s','e','r','s'], sentence: 'He is wearing blue trousers.', emoji: '👖' },
+      { word: 'Table', imagePrompt: '...', phonics: ['T','a','b','l','e'], sentence: 'The book is on the table.', emoji: '📚', translation: { word: 'Cái bàn', sentence: 'Quyển sách ở trên bàn.' } },
+      { word: 'Teacher', imagePrompt: '...', phonics: ['T','e','a','c','h','e','r'], sentence: 'My teacher is nice.', emoji: '👩‍🏫', translation: { word: 'Giáo viên', sentence: 'Cô giáo của tôi rất tốt bụng.' } },
+      { word: 'Teeth', imagePrompt: '...', phonics: ['T','e','e','t','h'], sentence: 'I brush my teeth.', emoji: '🦷', translation: { word: 'Răng', sentence: 'Tôi đánh răng.' } },
+      { word: 'Tiger', imagePrompt: '...', phonics: ['T','i','g','e','r'], sentence: 'A tiger is a big cat.', emoji: '🐅', translation: { word: 'Con hổ', sentence: 'Hổ là một loài mèo lớn.' } },
+      { word: 'Tomato', imagePrompt: '...', phonics: ['T','o','m','a','t','o'], sentence: 'A tomato is red.', emoji: '🍅', translation: { word: 'Cà chua', sentence: 'Cà chua có màu đỏ.' } },
+      { word: 'Train', imagePrompt: '...', phonics: ['T','r','a','i','n'], sentence: 'The train is fast.', emoji: '🚂', translation: { word: 'Tàu hỏa', sentence: 'Tàu hỏa chạy nhanh.' } },
     ]
   },
   {
     letter: 'U',
     words: [
-      { word: 'Ugly', imagePrompt: '...', phonics: ['U','g','l','y'], sentence: 'The monster is ugly.', emoji: '👹' },
-      { word: 'Uncle', imagePrompt: '...', phonics: ['U','n','c','l','e'], sentence: 'My uncle is funny.', emoji: '👨‍🦰' },
-      { word: 'Umbrella', imagePrompt: '...', phonics: ['U','m','b','r','e','l','l','a'], sentence: 'I have an umbrella.', emoji: '☂️' },
+      { word: 'Uncle', imagePrompt: '...', phonics: ['U','n','c','l','e'], sentence: 'My uncle is funny.', emoji: '👨‍🦰', translation: { word: 'Chú/Bác', sentence: 'Chú tôi rất vui tính.' } },
+      { word: 'Umbrella', imagePrompt: '...', phonics: ['U','m','b','r','e','l','l','a'], sentence: 'I have an umbrella.', emoji: '☂️', translation: { word: 'Cái ô', sentence: 'Tôi có một cái ô.' } },
+      { word: 'Up', imagePrompt: '...', phonics: ['U','p'], sentence: 'Look up at the sky.', emoji: '👆', translation: { word: 'Lên trên', sentence: 'Hãy nhìn lên bầu trời.' } },
+      { word: 'Under', imagePrompt: '...', phonics: ['U','n','d','e','r'], sentence: 'The cat is under the table.', emoji: '🐈', translation: { word: 'Bên dưới', sentence: 'Con mèo ở dưới gầm bàn.' } },
+      { word: 'Unicorn', imagePrompt: '...', phonics: ['U','n','i','c','o','r','n'], sentence: 'A unicorn is a mythical animal.', emoji: '🦄', translation: { word: 'Kỳ lân', sentence: 'Kỳ lân là một loài động vật thần thoại.' } },
     ]
   },
   {
     letter: 'V',
     words: [
-      { word: 'Volcano', imagePrompt: '...', phonics: ['V','o','l','c','a','n','o'], sentence: 'The volcano is hot.', emoji: '🌋' },
+      { word: 'Volcano', imagePrompt: '...', phonics: ['V','o','l','c','a','n','o'], sentence: 'The volcano is hot.', emoji: '🌋', translation: { word: 'Núi lửa', sentence: 'Núi lửa thì nóng.' } },
+      { word: 'Van', imagePrompt: '...', phonics: ['V','a','n'], sentence: 'The van is white.', emoji: '🚐', translation: { word: 'Xe tải nhỏ', sentence: 'Chiếc xe tải nhỏ màu trắng.' } },
+      { word: 'Vase', imagePrompt: '...', phonics: ['V','a','s','e'], sentence: 'The flowers are in the vase.', emoji: '💐', translation: { word: 'Bình hoa', sentence: 'Những bông hoa ở trong bình.' } },
+      { word: 'Vegetable', imagePrompt: '...', phonics: ['V','e','g','e','t','a','b','l','e'], sentence: 'Carrots are vegetables.', emoji: '🥕', translation: { word: 'Rau củ', sentence: 'Cà rốt là rau củ.' } },
+      { word: 'Violin', imagePrompt: '...', phonics: ['V','i','o','l','i','n'], sentence: 'She plays the violin.', emoji: '🎻', translation: { word: 'Đàn vi-ô-lông', sentence: 'Cô ấy chơi đàn vi-ô-lông.' } },
     ]
   },
   {
     letter: 'W',
     words: [
-      { word: 'Walk', imagePrompt: '...', phonics: ['W','a','l','k'], sentence: 'I walk to school.', emoji: '🚶' },
-      { word: 'Wardrobe', imagePrompt: '...', phonics: ['W','a','r','d','r','o','b','e'], sentence: 'My clothes are in the wardrobe.', emoji: '🚪' },
-      { word: 'Watch', imagePrompt: '...', phonics: ['W','a','t','c','h'], sentence: 'I have a new watch.', emoji: '⌚' },
-      { word: 'Watermelon', imagePrompt: '...', phonics: ['W','a','t','e','r','m','e','l','o','n'], sentence: 'Watermelon is juicy.', emoji: '🍉' },
+      { word: 'Walk', imagePrompt: '...', phonics: ['W','a','l','k'], sentence: 'I walk to school.', emoji: '🚶', translation: { word: 'Đi bộ', sentence: 'Tôi đi bộ đến trường.' } },
+      { word: 'Watch', imagePrompt: '...', phonics: ['W','a','t','c','h'], sentence: 'I have a new watch.', emoji: '⌚', translation: { word: 'Đồng hồ đeo tay', sentence: 'Tôi có một chiếc đồng hồ mới.' } },
+      { word: 'Watermelon', imagePrompt: '...', phonics: ['W','a','t','e','r','m','e','l','o','n'], sentence: 'Watermelon is juicy.', emoji: '🍉', translation: { word: 'Dưa hấu', sentence: 'Dưa hấu mọng nước.' } },
+      { word: 'Window', imagePrompt: '...', phonics: ['W','i','n','d','o','w'], sentence: 'Please open the window.', emoji: '🪟', translation: { word: 'Cửa sổ', sentence: 'Làm ơn hãy mở cửa sổ.' } },
     ]
   },
   {
     letter: 'X',
     words: [
-      { word: 'Xylophone', imagePrompt: '...', phonics: ['X','y','l','o','p','h','o','n','e'], sentence: 'I play the xylophone.', emoji: '🎶' },
+      { word: 'Xylophone', imagePrompt: '...', phonics: ['X','y','l','o','p','h','o','n','e'], sentence: 'I play the xylophone.', emoji: '🎶', translation: { word: 'Đàn mộc cầm', sentence: 'Tôi chơi đàn mộc cầm.' } },
+      { word: 'X-ray', imagePrompt: '...', phonics: ['X','-','r','a','y'], sentence: 'The doctor took an X-ray.', emoji: '🦴', translation: { word: 'Tia X', sentence: 'Bác sĩ đã chụp X-quang.' } },
+      { word: 'Box', imagePrompt: '...', phonics: ['B','o','x'], sentence: 'The toy is in the box.', emoji: '📦', translation: { word: 'Cái hộp', sentence: 'Đồ chơi ở trong hộp.' } },
+      { word: 'Fox', imagePrompt: '...', phonics: ['F','o','x'], sentence: 'The fox is clever.', emoji: '🦊', translation: { word: 'Con cáo', sentence: 'Con cáo thì lanh lợi.' } },
+      { word: 'Six', imagePrompt: '...', phonics: ['S','i','x'], sentence: 'I am six years old.', emoji: '6️⃣', translation: { word: 'Số sáu', sentence: 'Tôi sáu tuổi.' } },
     ]
   },
   {
     letter: 'Y',
     words: [
-      { word: 'Young', imagePrompt: '...', phonics: ['Y','o','u','n','g'], sentence: 'The baby is young.', emoji: '👶' },
-      { word: 'Yacht', imagePrompt: '...', phonics: ['Y','a','c','h','t'], sentence: 'The yacht is on the water.', emoji: '⛵️' },
+      { word: 'Young', imagePrompt: '...', phonics: ['Y','o','u','n','g'], sentence: 'The baby is young.', emoji: '👶', translation: { word: 'Trẻ', sentence: 'Em bé thì còn nhỏ.' } },
+      { word: 'Yacht', imagePrompt: '...', phonics: ['Y','a','c','h','t'], sentence: 'The yacht is on the water.', emoji: '⛵️', translation: { word: 'Du thuyền', sentence: 'Du thuyền ở trên mặt nước.' } },
+      { word: 'Yoyo', imagePrompt: '...', phonics: ['Y','o','y','o'], sentence: 'I can play with a yoyo.', emoji: '🪀', translation: { word: 'Con quay yo-yo', sentence: 'Tôi có thể chơi yo-yo.' } },
+      { word: 'Yogurt', imagePrompt: '...', phonics: ['Y','o','g','u','r','t'], sentence: 'I eat yogurt for breakfast.', emoji: '🍦', translation: { word: 'Sữa chua', sentence: 'Tôi ăn sữa chua cho bữa sáng.' } },
+      { word: 'Yard', imagePrompt: '...', phonics: ['Y','a','r','d'], sentence: 'The children play in the yard.', emoji: '🏡', translation: { word: 'Cái sân', sentence: 'Bọn trẻ chơi ở trong sân.' } },
     ]
   },
   {
     letter: 'Z',
     words: [
-      { word: 'Zebra', imagePrompt: '...', phonics: ['Z','e','b','r','a'], sentence: 'The zebra has stripes.', emoji: '🦓' },
+      { word: 'Zebra', imagePrompt: '...', phonics: ['Z','e','b','r','a'], sentence: 'The zebra has stripes.', emoji: '🦓', translation: { word: 'Ngựa vằn', sentence: 'Ngựa vằn có sọc.' } },
+      { word: 'Zoo', imagePrompt: '...', phonics: ['Z','o','o'], sentence: 'We saw lions at the zoo.', emoji: '🦁', translation: { word: 'Sở thú', sentence: 'Chúng tôi đã thấy sư tử ở sở thú.' } },
+      { word: 'Zero', imagePrompt: '...', phonics: ['Z','e','r','o'], sentence: 'The number is zero.', emoji: '0️⃣', translation: { word: 'Số không', sentence: 'Con số là không.' } },
+      { word: 'Zigzag', imagePrompt: '...', phonics: ['Z','i','g','z','a','g'], sentence: 'The road has a zigzag pattern.', emoji: '⚡', translation: { word: 'Zíc-zắc', sentence: 'Con đường có hình zíc-zắc.' } },
+      { word: 'Zipper', imagePrompt: '...', phonics: ['Z','i','p','p','e','r'], sentence: 'My jacket has a zipper.', emoji: '🧥', translation: { word: 'Dây kéo', sentence: 'Áo khoác của tôi có dây kéo.' } },
     ]
   },
 ];
@@ -572,7 +554,7 @@ const SpellingGame = ({ word, onCorrect, enabled }) => {
 };
 
 // --- From components/SentenceGame.tsx ---
-const SentenceGame = ({ sentence, onCorrect, enabled }) => {
+const SentenceGame = ({ sentence, translation, onCorrect, enabled }) => {
   const { speak, isSpeaking } = useTextToSpeech();
   const [guessedWords, setGuessedWords] = useState([]);
   const [feedback, setFeedback] = useState(null);
@@ -621,16 +603,19 @@ const SentenceGame = ({ sentence, onCorrect, enabled }) => {
   const feedbackClasses = feedback === 'correct' ? 'border-green-500 animate-tada' : feedback === 'incorrect' ? 'border-red-500 animate-shake' : 'border-gray-400';
 
   return React.createElement('div', null,
-    React.createElement('div', { className: "flex items-center justify-center gap-2 mb-3" },
-      React.createElement('h3', { className: "text-xl font-semibold text-sky-600" }, "Build the sentence!"),
-      React.createElement('button', {
-          onClick: () => speak(sentence),
-          disabled: !enabled || isSpeaking,
-          className: "text-slate-500 hover:text-sky-600 transition-colors disabled:opacity-50",
-          'aria-label': "Listen to the sentence again"
-        },
-        React.createElement(SoundIcon, { className: "w-6 h-6" })
-      )
+    React.createElement('div', { className: "flex flex-col items-center justify-center gap-1 mb-3" },
+      React.createElement('div', { className: "flex items-center gap-2" },
+        React.createElement('h3', { className: "text-xl font-semibold text-sky-600 text-center" }, "Build the sentence!"),
+        React.createElement('button', {
+            onClick: () => speak(sentence),
+            disabled: !enabled || isSpeaking,
+            className: "text-slate-500 hover:text-sky-600 transition-colors disabled:opacity-50",
+            'aria-label': "Listen to the sentence again"
+          },
+          React.createElement(SoundIcon, { className: "w-6 h-6" })
+        )
+      ),
+      React.createElement('p', { className: "text-base text-slate-500 text-center px-2" }, translation)
     ),
     React.createElement('div', { className: `min-h-[64px] w-full p-3 bg-white rounded-lg border-2 border-dashed flex items-center justify-center text-xl font-semibold my-2 flex-wrap gap-2 ${feedbackClasses}` },
       guessedWords.length > 0 ? guessedWords.map((item, i) =>
@@ -657,15 +642,16 @@ const SentenceGame = ({ sentence, onCorrect, enabled }) => {
 const WordCard = ({ wordData, onSelect }) => {
   return React.createElement('button', {
       onClick: onSelect,
-      className: "bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-400"
+      className: "bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-400 h-full flex flex-col"
     },
     React.createElement('div', { className: "relative aspect-[4/3] bg-indigo-100 flex items-center justify-center" },
       React.createElement('span', { className: "text-8xl", role: "img", 'aria-label': wordData.word },
         wordData.emoji
       )
     ),
-    React.createElement('div', { className: "p-4" },
-      React.createElement('h3', { className: "text-2xl font-bold text-slate-700 text-center capitalize" }, wordData.word)
+    React.createElement('div', { className: "p-4 flex-grow flex flex-col justify-center" },
+      React.createElement('h3', { className: "text-2xl font-bold text-slate-700 text-center capitalize" }, wordData.word),
+      React.createElement('p', { className: "text-slate-500 text-center capitalize" }, wordData.translation.word)
     )
   );
 };
@@ -708,18 +694,21 @@ const ActivityScreen = ({ wordData, letterData, onBack, onComplete }) => {
   return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8 space-y-6" },
     React.createElement('div', { className: "flex items-center justify-between" },
       React.createElement(BackButton, { onClick: onBack }),
-      React.createElement('div', { className: "flex items-center gap-4" },
-        React.createElement('h2', { className: "text-4xl md:text-6xl font-black text-slate-700 capitalize" },
-          wordData.word
+      React.createElement('div', { className: "flex flex-col items-center" },
+        React.createElement('div', { className: "flex items-center gap-4" },
+            React.createElement('h2', { className: "text-4xl md:text-6xl font-black text-slate-700 capitalize" },
+            wordData.word
+            ),
+            React.createElement('button', {
+                onClick: () => speak(wordData.word),
+                disabled: isSpeaking,
+                className: "text-slate-500 hover:text-indigo-600 transition-colors disabled:opacity-50",
+                'aria-label': `Pronounce ${wordData.word}`
+            },
+            React.createElement(SoundIcon, { className: "w-8 h-8" })
+            )
         ),
-        React.createElement('button', {
-            onClick: () => speak(wordData.word),
-            disabled: isSpeaking,
-            className: "text-slate-500 hover:text-indigo-600 transition-colors disabled:opacity-50",
-            'aria-label': `Pronounce ${wordData.word}`
-          },
-          React.createElement(SoundIcon, { className: "w-8 h-8" })
-        )
+        React.createElement('p', { className: "text-xl text-slate-500" }, wordData.translation.word)
       ),
       React.createElement('div', { className: "w-24" })
     ),
@@ -748,7 +737,7 @@ const ActivityScreen = ({ wordData, letterData, onBack, onComplete }) => {
       React.createElement(SpellingGame, { word: wordData.word, onCorrect: handleNext, enabled: gameState === 'spelling' })
     ),
     (gameState === 'sentence' || gameState === 'done') && React.createElement('div', { className: `p-4 bg-sky-100 rounded-lg ${gameState !== 'sentence' ? 'opacity-50' : ''}` },
-      React.createElement(SentenceGame, { sentence: wordData.sentence, onCorrect: handleNext, enabled: gameState === 'sentence' })
+      React.createElement(SentenceGame, { sentence: wordData.sentence, translation: wordData.translation.sentence, onCorrect: handleNext, enabled: gameState === 'sentence' })
     ),
     gameState === 'done' && React.createElement('div', { className: "text-center p-8" },
       React.createElement('h2', { className: "text-4xl font-bold text-green-500 animate-tada" }, "Well Done!"),
