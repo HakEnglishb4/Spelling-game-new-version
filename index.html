@@ -11,14 +11,15 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
+            touch-action: manipulation; /* Improves touch responsiveness */
         }
-        /* Tùy chỉnh thanh cuộn */
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* Animation cho game (với tiền tố cho trình duyệt cũ) */
+        /* Keyframe animations */
         @-webkit-keyframes tada {
             from { -webkit-transform: scale3d(1, 1, 1); transform: scale3d(1, 1, 1); }
             10%, 20% { -webkit-transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
@@ -340,28 +341,37 @@
 
         // --- From services/geminiService.ts ---
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const imageCache = new Map(); // Performance: Cache generated images
+
         const generateImage = async (prompt) => {
-          try {
-            const response = await ai.models.generateImages({
-              model: 'imagen-4.0-generate-001',
-              prompt: prompt,
-              config: {
-                numberOfImages: 1,
-                outputMimeType: 'image/png',
-                aspectRatio: '4:3',
-              },
-            });
-            if (response.generatedImages && response.generatedImages.length > 0) {
-              const base64ImageBytes = response.generatedImages[0].image.imageBytes;
-              return `data:image/png;base64,${base64ImageBytes}`;
-            } else {
-              throw new Error("No image was generated.");
+            if (imageCache.has(prompt)) {
+                return imageCache.get(prompt);
             }
-          } catch (error) {
-            console.error("Error generating image with Gemini:", error);
-            const wordForSeed = prompt.split('of a ')[1]?.split(' ')[0] || 'default';
-            return `https://picsum.photos/seed/${wordForSeed}/600/400`;
-          }
+            try {
+                const response = await ai.models.generateImages({
+                model: 'imagen-4.0-generate-001',
+                prompt: prompt,
+                config: {
+                    numberOfImages: 1,
+                    outputMimeType: 'image/png',
+                    aspectRatio: '4:3',
+                },
+                });
+                if (response.generatedImages && response.generatedImages.length > 0) {
+                    const base64ImageBytes = response.generatedImages[0].image.imageBytes;
+                    const imageUrl = `data:image/png;base64,${base64ImageBytes}`;
+                    imageCache.set(prompt, imageUrl); // Cache the new image
+                    return imageUrl;
+                } else {
+                    throw new Error("No image was generated.");
+                }
+            } catch (error) {
+                console.error("Error generating image with Gemini:", error);
+                const wordForSeed = prompt.split('of a ')[1]?.split(' ')[0] || 'default';
+                const fallbackUrl = `https://picsum.photos/seed/${wordForSeed}/600/400`;
+                imageCache.set(prompt, fallbackUrl); // Cache the fallback to prevent retries
+                return fallbackUrl;
+            }
         };
         
         // --- Helper Functions ---
@@ -378,7 +388,7 @@
         // --- From components/Header.tsx ---
         const Header = () => {
           return React.createElement('header', { className: "text-center" },
-            React.createElement('h1', { className: "text-4xl md:text-5xl font-black text-indigo-600 tracking-tight" }, "Interactive Alphabet Adventure"),
+            React.createElement('h1', { className: "text-3xl sm:text-4xl md:text-5xl font-black text-indigo-600 tracking-tight" }, "Interactive Alphabet Adventure"),
             React.createElement('p', { className: "text-lg text-slate-600 mt-2" }, "Learn letters and sounds!")
           );
         };
@@ -585,7 +595,7 @@
           const colors = ['bg-orange-400 hover:bg-orange-500', 'bg-teal-400 hover:bg-teal-500', 'bg-violet-400 hover:bg-violet-500', 'bg-rose-400 hover:bg-rose-500', 'bg-sky-400 hover:bg-sky-500'];
           return React.createElement('div', { className: "bg-white/70 backdrop-blur-sm rounded-3xl shadow-lg p-6 md:p-8" },
             React.createElement('h2', { className: "text-2xl md:text-3xl font-bold text-center text-slate-700 mb-6" }, "Choose a letter to start!"),
-            React.createElement('div', { className: "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-3 md:gap-4" },
+            React.createElement('div', { className: "grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 gap-3 md:gap-4" },
               ALPHABET_DATA.map((item, index) =>
                 React.createElement('button', {
                   key: item.letter,
